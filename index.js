@@ -13,14 +13,13 @@ const selectedOptions = {
 const sourceDir = "./templates";
 const destDir = "./output";
 
-function generateTemplate(dirPath) {
-  // Recursively copy the source directory to the destination directory
-  fs.copySync(dirPath, destDir);
-
-  const files = fs.readdirSync(destDir);
+async function generateTemplate(dir) {
+  const files = fs.readdirSync(dir);
   for (const file of files) {
-    const filePath = path.join(destDir, file);
+    const filePath = path.join(dir, file);
+    console.log(filePath);
     const stat = fs.statSync(filePath);
+    // check if the file is a directory
     if (stat.isDirectory()) {
       generateTemplate(filePath);
     } else {
@@ -54,6 +53,7 @@ function generateTemplate(dirPath) {
     }
   }
 }
+
 function checkCommentMarkers(contents) {
   const blocks = {};
   let currentBlock = null;
@@ -101,4 +101,11 @@ function checkCommentMarkers(contents) {
   return true;
 }
 
-generateTemplate(sourceDir);
+function main() {
+  // Recursively copy the source directory to the destination directory
+  fs.copySync(sourceDir, destDir);
+
+  generateTemplate(destDir);
+}
+
+main();
