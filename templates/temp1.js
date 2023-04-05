@@ -8,6 +8,6 @@ console.log("this is a code line for option 1");
 console.log("this is a code line for option 1");
 // RA:END
 
-// RA:START: option2
-console.log("this is a code line for option 2");
+// RA:START: option2, option5, option6
+console.log("this is a code line for option 2 and option 5");
 // RA:END
