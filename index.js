@@ -9,8 +9,8 @@ const selectedOptions = {
   option4: true,
   option5: true,
   option6: true,
-  option7: true,
-  option8: true,
+  option7: false,
+  option8: false,
 };
 
 // Define the source and destination directories
@@ -35,7 +35,7 @@ async function generateTemplate(dir) {
         Object.entries(selectedOptions)
       )) {
         const pattern = new RegExp(
-          `// RA:START:.*${option}.*[\\s\\S]*?// RA:END\\s*`,
+          `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}\\s*`,
           "g"
         );
 
@@ -79,6 +79,7 @@ async function generateTemplate(dir) {
                   .toString()
                   .match(dependsRegex)?.[1]
                   .split(/\s*,\s*/)
+                  .filter(Boolean)
               : [];
 
             if (
@@ -92,11 +93,22 @@ async function generateTemplate(dir) {
                 }
               );
 
+              const dependRegex = new RegExp(
+                `// RA:DEPENDS:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`
+              );
+
               console.log(areAllDependenciesSelected);
 
               if (!areAllDependenciesSelected) {
-                // Remove the code block
-                content = content.replace(pattern, "");
+                // remove only the code block that has the depends marker
+                for (match of codeBlock.match(pattern)) {
+                  if (dependRegex.test(match)) {
+                    console.log(dependsOnOptions);
+                    console.log(match);
+                    // Remove the code block
+                    content = content.replace(match, "");
+                  }
+                }
               }
             }
           }
