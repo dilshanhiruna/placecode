@@ -14,4 +14,5 @@ console.log("this is a code line for option 2 and option 5");
 
 // RA:START: option6
 console.log("this is a code line for option6, depends on option7, option8");
+// RA:DEPENDS: option7, option8
 // RA:END

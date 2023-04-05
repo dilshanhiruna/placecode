@@ -3,11 +3,11 @@ const path = require("path");
 
 // Define the selected options here
 const selectedOptions = {
-  option1: false,
-  option2: false,
+  option1: true,
+  option2: true,
   option3: true,
   option4: true,
-  option5: false,
+  option5: true,
   option6: true,
   option7: true,
   option8: true,
@@ -34,22 +34,21 @@ async function generateTemplate(dir) {
       for (const [option, isSelected] of Array.from(
         Object.entries(selectedOptions)
       )) {
-        if (!isSelected) {
-          // Remove the block of code between the start and end markers for this option
+        const pattern = new RegExp(
+          `// RA:START:.*${option}.*[\\s\\S]*?// RA:END\\s*`,
+          "g"
+        );
 
-          const pattern = new RegExp(
-            `// RA:START:.*${option}.*[\\s\\S]*?// RA:END\\s*`,
-            "g"
-          );
+        // Get the code block that matches the pattern
+        const codeBlocks = content.match(pattern) || [];
 
-          // Get the code block that matches the pattern
-          const codeBlocks = content.match(pattern) || [];
+        for (const codeBlock of codeBlocks) {
+          if (!isSelected) {
+            // if the option is selected
 
-          for (const codeBlock of codeBlocks) {
-            console.log(codeBlock);
-
-            const regex = /RA:START:\s*([^/\n\r]*)/;
             // Get the options from the start marker
+            const regex = /RA:START:\s*([^/\n\r]*)/;
+
             const options = codeBlock
               .toString()
               .match(regex)?.[1]
@@ -69,12 +68,43 @@ async function generateTemplate(dir) {
               // if only one option, remove the code block
               content = content.replace(pattern, "");
             }
+          } else {
+            // if the option is selected
+            // Check if this code block has a depends marker
+            const dependsRegex = /RA:DEPENDS:\s*([^/\n\r]*)/;
+            const [dependsMatch] = codeBlock.match(dependsRegex) || [];
+
+            const dependsOnOptions = dependsMatch
+              ? dependsMatch
+                  .toString()
+                  .match(dependsRegex)?.[1]
+                  .split(/\s*,\s*/)
+              : [];
+
+            if (
+              Array.isArray(dependsOnOptions) &&
+              dependsOnOptions.length > 0
+            ) {
+              // Check if all the required options are selected
+              const areAllDependenciesSelected = dependsOnOptions.every(
+                (option) => {
+                  return selectedOptions[option];
+                }
+              );
+
+              console.log(areAllDependenciesSelected);
+
+              if (!areAllDependenciesSelected) {
+                // Remove the code block
+                content = content.replace(pattern, "");
+              }
+            }
           }
         }
       }
 
       // Remove all comment markers
-      const markerPattern = /\/\/ RA:(START|END)[^\r\n]*\r?\n/g;
+      const markerPattern = /\/\/ RA:(START|END|DEPENDS)[^\r\n]*\r?\n/g;
       content = content.replace(markerPattern, "");
 
       // Write the modified file contents back to the file
