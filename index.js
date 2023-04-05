@@ -3,11 +3,14 @@ const path = require("path");
 
 // Define the selected options here
 const selectedOptions = {
-  option1: true,
-  option2: true,
+  option1: false,
+  option2: false,
   option3: true,
   option4: true,
   option5: false,
+  option6: true,
+  option7: true,
+  option8: true,
 };
 
 // Define the source and destination directories
@@ -40,9 +43,11 @@ async function generateTemplate(dir) {
           );
 
           // Get the code block that matches the pattern
-          const [codeBlock] = content.match(pattern) || [];
+          const codeBlocks = content.match(pattern) || [];
 
-          if (codeBlock) {
+          for (const codeBlock of codeBlocks) {
+            console.log(codeBlock);
+
             const regex = /RA:START:\s*([^/\n\r]*)/;
             // Get the options from the start marker
             const options = codeBlock
