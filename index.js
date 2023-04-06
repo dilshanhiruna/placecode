@@ -3,14 +3,14 @@ const path = require("path");
 
 // Define the selected options here
 const selectedOptions = {
-  option1: true,
+  option1: false,
   option2: true,
   option3: true,
   option4: true,
   option5: true,
   option6: true,
-  option7: false,
-  option8: false,
+  option7: true,
+  option8: true,
   option9: true,
 };
 
@@ -154,13 +154,115 @@ function checkCommentMarkers(dir) {
   return errorFound;
 }
 
-function main() {
-  if (!checkCommentMarkers(sourceDir)) {
-    // Recursively copy the source directory to the destination directory
-    fs.copySync(sourceDir, destDir);
+// This function will recursively traverse the directory tree
+// and process any zpc.txt files it finds
+function processPlacecodeFiles(directory) {
+  try {
+    // Get a list of files and folders in the current directory
+    const files = fs.readdirSync(directory);
 
-    generateTemplate(destDir);
+    // Check for the existence of a zpc.txt file
+    if (files.includes("zpc.txt")) {
+      const placecodePath = path.join(directory, "zpc.txt");
+
+      // Read the contents of the zpc.txt file
+      const placecodeContents = fs.readFileSync(placecodePath, "utf-8");
+
+      // Process the placecode contents for each option
+      for (const [option, isSelected] of Array.from(
+        Object.entries(selectedOptions)
+      )) {
+        const pattern = new RegExp(
+          // `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}\\s*`,
+          `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}.*(?:\r?\n|$)`,
+          "g"
+        );
+
+        // Get the code block that matches the pattern
+        const matches = placecodeContents.match(pattern) || [];
+
+        // console.log(matches);
+
+        for (const match of matches) {
+          if (!isSelected) {
+            // Get the options from the start marker
+            const regex = /RA:START:\s*([^/\n\r]*)/;
+
+            const options = match
+              .toString()
+              .match(regex)?.[1]
+              .split(/\s*,\s*/);
+
+            // get the defined files and folders
+            const pattern = /\/\/ RA:START:.*?\n([\s\S]*?)\/\/ RA:END:.*?\n/g;
+            const matches = [...match.matchAll(pattern)];
+            const result = matches
+              .map((match) => match[1].split("\n").filter(Boolean))
+              .flat();
+
+            // avoid duplicates names
+            const uniqueFiles = [...new Set(result)];
+
+            // if options are more than one, check if all options are false
+            // if yes, remove the code block
+            if (Array.isArray(options) && options.length > 1) {
+              const allOptionsFalse = options.every((option) => {
+                return !selectedOptions[option];
+              });
+
+              if (allOptionsFalse) {
+                removeFiles(uniqueFiles, directory);
+              }
+            } else {
+              removeFiles(uniqueFiles, directory);
+            }
+          }
+        }
+      }
+
+      // Remove the zpc.txt file
+      fs.unlink(placecodePath);
+    }
+    // Recursively process any subdirectories
+    for (const file of files) {
+      const filePath = path.join(directory, file);
+
+      if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+        processPlacecodeFiles(filePath);
+      }
+    }
+  } catch (error) {
+    console.error(`Error processing placecode files: ${error}`);
   }
+}
+
+function removeFiles(targetsArray, directory) {
+  // Remove the specified files and folders
+  for (const target of targetsArray) {
+    const targetPath = path.join(directory, target);
+    try {
+      if (fs.existsSync(targetPath)) {
+        const stats = fs.statSync(targetPath);
+        if (stats.isDirectory()) {
+          fs.rm(targetPath, { recursive: true });
+        } else {
+          fs.unlink(targetPath);
+        }
+      }
+    } catch (error) {
+      console.error(`Error removing ${targetPath}: ${error}`);
+    }
+  }
+}
+
+function main() {
+  // if (!checkCommentMarkers(sourceDir)) {
+  //   // Recursively copy the source directory to the destination directory
+  fs.copySync(sourceDir, destDir);
+  // }
+
+  // generateTemplate(destDir);
+  processPlacecodeFiles(destDir);
 }
 
 main();
