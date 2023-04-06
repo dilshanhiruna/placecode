@@ -1,0 +1,1 @@
+Avoid nested DEPEND markers
