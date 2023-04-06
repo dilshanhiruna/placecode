@@ -7,9 +7,9 @@ console.log("this is a code line for option 1");
 
 console.log("this is a default code line");
 
-// RA:START: option2
+// RA:START: option2, option9
 console.log("this is a code line for option 2");
-// RA:END: option2
+// RA:END: option2, option9
 
 // RA:START: option3
 console.log("this is a code line for option 3");
