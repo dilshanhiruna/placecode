@@ -12,6 +12,8 @@ const {
   regex_reuse_marker,
 } = require("./main/regex");
 
+const { sourceDir, destDir, zpc, snippetsDir } = require("./zpc.config.js");
+
 // Define the selected options here
 const selectedOptions = {
   option1: true,
@@ -24,10 +26,6 @@ const selectedOptions = {
   option8: true,
   option9: true,
 };
-
-// Define the source and destination directories
-const sourceDir = "./templates";
-const destDir = "./output";
 
 async function generateTemplate(dir) {
   const files = fs.readdirSync(dir);
@@ -161,8 +159,8 @@ function processPlacecodeFiles(directory) {
     const files = fs.readdirSync(directory);
 
     // Check for the existence of a zpc.txt file
-    if (files.includes("zpc.txt")) {
-      const placecodePath = path.join(directory, "zpc.txt");
+    if (files.includes(zpc)) {
+      const placecodePath = path.join(directory, zpc);
 
       // Read the contents of the zpc.txt file
       const placecodeContents = fs.readFileSync(placecodePath, "utf-8");
@@ -277,12 +275,11 @@ function removeFiles(targetsArray, directory) {
 }
 
 function placeSnippets(content) {
-  const reusableCodeFolder = "zplacecode/snippets";
   const matches = [...content.matchAll(regex_reuse_marker)];
 
   for (const match of matches) {
     const filename = match[1];
-    const filePath = path.join(reusableCodeFolder, filename);
+    const filePath = path.join(snippetsDir, filename);
 
     if (fs.existsSync(filePath)) {
       const reusableCode = fs.readFileSync(filePath, "utf-8");
