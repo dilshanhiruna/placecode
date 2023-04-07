@@ -3,9 +3,9 @@ const path = require("path");
 
 // Define the selected options here
 const selectedOptions = {
-  option1: false,
+  option1: true,
   option2: true,
-  option3: true,
+  option3: false,
   option4: true,
   option5: true,
   option6: true,
@@ -99,14 +99,10 @@ async function generateTemplate(dir) {
                 `// RA:DEPENDS:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`
               );
 
-              // console.log(areAllDependenciesSelected);
-
               if (!areAllDependenciesSelected) {
                 // remove only the code block that has the depends marker
                 for (match of codeBlock.match(pattern)) {
                   if (dependRegex.test(match)) {
-                    // console.log(dependsOnOptions);
-                    // console.log(match);
                     // Remove the code block
                     content = content.replace(match, "");
                   }
@@ -181,8 +177,6 @@ function processPlacecodeFiles(directory) {
         // Get the code block that matches the pattern
         const matches = placecodeContents.match(pattern) || [];
 
-        // console.log(matches);
-
         for (const match of matches) {
           if (!isSelected) {
             // Get the options from the start marker
@@ -215,6 +209,54 @@ function processPlacecodeFiles(directory) {
               }
             } else {
               removeFiles(uniqueFiles, directory);
+            }
+          } else {
+            // if the option is selected
+            // Check if this code block has a depends marker
+            const dependsRegex = /RA:DEPENDS:\s*([^/\n\r]*)/;
+            const [dependsMatch] = match.match(dependsRegex) || [];
+
+            const dependsOnOptions = dependsMatch
+              ? dependsMatch
+                  .toString()
+                  .match(dependsRegex)?.[1]
+                  .split(/\s*,\s*/)
+                  .filter(Boolean)
+              : [];
+
+            if (
+              Array.isArray(dependsOnOptions) &&
+              dependsOnOptions.length > 0
+            ) {
+              // Check if all the required options are selected
+              const areAllDependenciesSelected = dependsOnOptions.every(
+                (option) => {
+                  return selectedOptions[option];
+                }
+              );
+
+              const dependRegex = new RegExp(
+                `// RA:DEPENDS:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`
+              );
+
+              if (!areAllDependenciesSelected) {
+                // get the defined files and folders
+                const pattern =
+                  /\/\/ RA:START:.*?\n([\s\S]*?)\/\/ RA:END:.*?\n/g;
+                const matches = [...match.matchAll(pattern)];
+                const result = matches
+                  .map((match) => match[1].split("\n").filter(Boolean))
+                  .flat();
+
+                // avoid duplicates names
+                // remove elements that have a DEPENDS marker from the array
+                const uniqueFiles = [...new Set(result)].filter((file) => {
+                  return !file.match(dependRegex);
+                });
+
+                // remove the files and folders
+                removeFiles(uniqueFiles, directory);
+              }
             }
           }
         }
@@ -256,13 +298,12 @@ function removeFiles(targetsArray, directory) {
 }
 
 function main() {
-  // if (!checkCommentMarkers(sourceDir)) {
-  //   // Recursively copy the source directory to the destination directory
-  fs.copySync(sourceDir, destDir);
-  // }
-
-  // generateTemplate(destDir);
-  processPlacecodeFiles(destDir);
+  if (!checkCommentMarkers(sourceDir)) {
+    // Recursively copy the source directory to the destination directory
+    fs.copySync(sourceDir, destDir);
+    processPlacecodeFiles(destDir);
+    generateTemplate(destDir);
+  }
 }
 
 main();

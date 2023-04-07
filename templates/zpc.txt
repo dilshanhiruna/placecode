@@ -1,7 +1,8 @@
 // RA:START: option1
 temp1.js
+// RA:DEPENDS: option3, option4
 // RA:END: option1
 
-// RA:START: option2
+// RA:START: option1
 temp2.js
-// RA:END: option2
+// RA:END: option1
