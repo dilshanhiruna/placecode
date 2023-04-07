@@ -5,7 +5,7 @@ const path = require("path");
 const selectedOptions = {
   option1: true,
   option2: true,
-  option3: false,
+  option3: true,
   option4: true,
   option5: true,
   option6: true,
@@ -22,7 +22,6 @@ async function generateTemplate(dir) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
     const filePath = path.join(dir, file);
-    console.log(filePath);
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
@@ -30,6 +29,8 @@ async function generateTemplate(dir) {
     } else {
       // Read the file contents
       let content = fs.readFileSync(filePath, "utf8");
+
+      content = placeSnippets(content);
 
       // Loop through each option and remove the unselected blocks
       for (const [option, isSelected] of Array.from(
@@ -295,6 +296,26 @@ function removeFiles(targetsArray, directory) {
       console.error(`Error removing ${targetPath}: ${error}`);
     }
   }
+}
+
+function placeSnippets(content) {
+  const reusableCodePattern = /\/\/ RA:REUSE: (.+)/g;
+  const reusableCodeFolder = "zplacecode/snippets";
+  const matches = [...content.matchAll(reusableCodePattern)];
+
+  for (const match of matches) {
+    const filename = match[1];
+    const filePath = path.join(reusableCodeFolder, filename);
+
+    if (fs.existsSync(filePath)) {
+      const reusableCode = fs.readFileSync(filePath, "utf-8");
+      content = content.replace(match[0], reusableCode);
+    } else {
+      console.warn(`Reusable code file ${filePath} not found.`);
+    }
+  }
+
+  return content;
 }
 
 function main() {

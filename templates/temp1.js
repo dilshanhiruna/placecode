@@ -1,5 +1,9 @@
 console.log("this is a default code line");
 
+console.log("this is a default code line");
+
+// RA:REUSE: snp1.js
+
 // RA:START: option1
 console.log("this is a code line for option 1");
 // RA:END: option1
