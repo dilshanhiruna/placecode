@@ -14,10 +14,10 @@ const {
 
 // Define the selected options here
 const selectedOptions = {
-  option1: false,
-  option2: false,
-  option3: false,
-  option4: false,
+  option1: true,
+  option2: true,
+  option3: true,
+  option4: true,
   option5: true,
   option6: true,
   option7: true,
@@ -47,7 +47,7 @@ async function generateTemplate(dir) {
       for (const [option, isSelected] of Array.from(
         Object.entries(selectedOptions)
       )) {
-        const pattern = new RegExp(regex_start_to_end_options, "g");
+        const pattern = new RegExp(regex_start_to_end_options(option), "g");
 
         // Get the code block that matches the pattern
         const codeBlocks = content.match(pattern) || [];
@@ -99,7 +99,9 @@ async function generateTemplate(dir) {
                 }
               );
 
-              const dependRegex = new RegExp(regex_depends_with_options);
+              const dependRegex = new RegExp(
+                regex_depends_with_options(dependsOnOptions)
+              );
 
               if (!areAllDependenciesSelected) {
                 // remove only the code block that has the depends marker
@@ -169,7 +171,7 @@ function processPlacecodeFiles(directory) {
       for (const [option, isSelected] of Array.from(
         Object.entries(selectedOptions)
       )) {
-        const pattern = new RegExp(regex_start_to_end_options, "g");
+        const pattern = new RegExp(regex_start_to_end_options(option), "g");
 
         // Get the code block that matches the pattern
         const matches = placecodeContents.match(pattern) || [];
