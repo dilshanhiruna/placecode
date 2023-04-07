@@ -4,7 +4,7 @@ const path = require("path");
 // Define the selected options here
 const selectedOptions = {
   option1: true,
-  option2: true,
+  option2: false,
   option3: true,
   option4: true,
   option5: true,
@@ -179,6 +179,23 @@ function processPlacecodeFiles(directory) {
         const matches = placecodeContents.match(pattern) || [];
 
         for (const match of matches) {
+          // const pattern = /\/\/ RA:START:.*?\n([\s\S]*?)\/\/ RA:END:.*?\n/g;
+          // const fileMatches = [...match.matchAll(pattern)];
+          // const result = fileMatches
+          //   .map((match) => match[1].split("\n").filter(Boolean))
+          //   .flat();
+
+          // get the defined files and folders
+          const result = match
+            .split(/\r?\n/)
+            .filter((line) => line.trim().length > 0)
+            .filter((element) => {
+              return !element.startsWith("//");
+            });
+
+          // avoid duplicates names
+          const uniqueFiles = [...new Set(result)];
+
           if (!isSelected) {
             // Get the options from the start marker
             const regex = /RA:START:\s*([^/\n\r]*)/;
@@ -187,16 +204,6 @@ function processPlacecodeFiles(directory) {
               .toString()
               .match(regex)?.[1]
               .split(/\s*,\s*/);
-
-            // get the defined files and folders
-            const pattern = /\/\/ RA:START:.*?\n([\s\S]*?)\/\/ RA:END:.*?\n/g;
-            const matches = [...match.matchAll(pattern)];
-            const result = matches
-              .map((match) => match[1].split("\n").filter(Boolean))
-              .flat();
-
-            // avoid duplicates names
-            const uniqueFiles = [...new Set(result)];
 
             // if options are more than one, check if all options are false
             // if yes, remove the code block
@@ -236,25 +243,7 @@ function processPlacecodeFiles(directory) {
                 }
               );
 
-              const dependRegex = new RegExp(
-                `// RA:DEPENDS:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`
-              );
-
               if (!areAllDependenciesSelected) {
-                // get the defined files and folders
-                const pattern =
-                  /\/\/ RA:START:.*?\n([\s\S]*?)\/\/ RA:END:.*?\n/g;
-                const matches = [...match.matchAll(pattern)];
-                const result = matches
-                  .map((match) => match[1].split("\n").filter(Boolean))
-                  .flat();
-
-                // avoid duplicates names
-                // remove elements that have a DEPENDS marker from the array
-                const uniqueFiles = [...new Set(result)].filter((file) => {
-                  return !file.match(dependRegex);
-                });
-
                 // remove the files and folders
                 removeFiles(uniqueFiles, directory);
               }

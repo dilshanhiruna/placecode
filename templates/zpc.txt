@@ -3,6 +3,6 @@ temp1.js
 // RA:DEPENDS: option3, option4
 // RA:END: option1
 
-// RA:START: option1
+// RA:START: option2, option3
 temp2.js
-// RA:END: option1
+// RA:END: option2, option3
