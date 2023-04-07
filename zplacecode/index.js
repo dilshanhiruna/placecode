@@ -1,12 +1,23 @@
 const fs = require("fs-extra");
 const path = require("path");
+const {
+  regex_start_to_end_options,
+  regex_start_marker,
+  regex_depends_marker,
+  regex_depends_with_options,
+  regex_all_markers,
+  regex_start_only_marker,
+  regex_end_only_marker,
+  regex_all_markers_start,
+  regex_reuse_marker,
+} = require("./main/regex");
 
 // Define the selected options here
 const selectedOptions = {
-  option1: true,
+  option1: false,
   option2: false,
-  option3: true,
-  option4: true,
+  option3: false,
+  option4: false,
   option5: true,
   option6: true,
   option7: true,
@@ -36,11 +47,7 @@ async function generateTemplate(dir) {
       for (const [option, isSelected] of Array.from(
         Object.entries(selectedOptions)
       )) {
-        const pattern = new RegExp(
-          // `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}\\s*`,
-          `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}.*(?:\r?\n|$)`,
-          "g"
-        );
+        const pattern = new RegExp(regex_start_to_end_options, "g");
 
         // Get the code block that matches the pattern
         const codeBlocks = content.match(pattern) || [];
@@ -49,12 +56,9 @@ async function generateTemplate(dir) {
           if (!isSelected) {
             // if the option is selected
 
-            // Get the options from the start marker
-            const regex = /RA:START:\s*([^/\n\r]*)/;
-
             const options = codeBlock
               .toString()
-              .match(regex)?.[1]
+              .match(regex_start_marker)?.[1]
               .split(/\s*,\s*/);
 
             // if options are more than one, check if all options are false
@@ -74,13 +78,12 @@ async function generateTemplate(dir) {
           } else {
             // if the option is selected
             // Check if this code block has a depends marker
-            const dependsRegex = /RA:DEPENDS:\s*([^/\n\r]*)/;
-            const [dependsMatch] = codeBlock.match(dependsRegex) || [];
+            const [dependsMatch] = codeBlock.match(regex_depends_marker) || [];
 
             const dependsOnOptions = dependsMatch
               ? dependsMatch
                   .toString()
-                  .match(dependsRegex)?.[1]
+                  .match(regex_depends_marker)?.[1]
                   .split(/\s*,\s*/)
                   .filter(Boolean)
               : [];
@@ -96,9 +99,7 @@ async function generateTemplate(dir) {
                 }
               );
 
-              const dependRegex = new RegExp(
-                `// RA:DEPENDS:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`
-              );
+              const dependRegex = new RegExp(regex_depends_with_options);
 
               if (!areAllDependenciesSelected) {
                 // remove only the code block that has the depends marker
@@ -115,8 +116,7 @@ async function generateTemplate(dir) {
       }
 
       // Remove all comment markers
-      const markerPattern = /\/\/ RA:(START|END|DEPENDS)[^\r\n]*\r?\n/g;
-      content = content.replace(markerPattern, "");
+      content = content.replace(regex_all_markers, "");
 
       // Write the modified file contents back to the file
       fs.writeFileSync(filePath, content, "utf8");
@@ -137,8 +137,8 @@ function checkCommentMarkers(dir) {
       // Read the file contents
       let content = fs.readFileSync(filePath, "utf8");
 
-      const startCount = (content.match(/\/\/ RA:START:/g) || []).length;
-      const endCount = (content.match(/\/\/ RA:END/g) || []).length;
+      const startCount = (content.match(regex_start_only_marker) || []).length;
+      const endCount = (content.match(regex_end_only_marker) || []).length;
 
       if (startCount !== endCount) {
         console.error(`\nMarkers do not match`);
@@ -169,28 +169,18 @@ function processPlacecodeFiles(directory) {
       for (const [option, isSelected] of Array.from(
         Object.entries(selectedOptions)
       )) {
-        const pattern = new RegExp(
-          // `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}\\s*`,
-          `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}.*(?:\r?\n|$)`,
-          "g"
-        );
+        const pattern = new RegExp(regex_start_to_end_options, "g");
 
         // Get the code block that matches the pattern
         const matches = placecodeContents.match(pattern) || [];
 
         for (const match of matches) {
-          // const pattern = /\/\/ RA:START:.*?\n([\s\S]*?)\/\/ RA:END:.*?\n/g;
-          // const fileMatches = [...match.matchAll(pattern)];
-          // const result = fileMatches
-          //   .map((match) => match[1].split("\n").filter(Boolean))
-          //   .flat();
-
           // get the defined files and folders
           const result = match
             .split(/\r?\n/)
             .filter((line) => line.trim().length > 0)
             .filter((element) => {
-              return !element.startsWith("//");
+              return !element.startsWith(regex_all_markers_start);
             });
 
           // avoid duplicates names
@@ -198,11 +188,9 @@ function processPlacecodeFiles(directory) {
 
           if (!isSelected) {
             // Get the options from the start marker
-            const regex = /RA:START:\s*([^/\n\r]*)/;
-
             const options = match
               .toString()
-              .match(regex)?.[1]
+              .match(regex_start_marker)?.[1]
               .split(/\s*,\s*/);
 
             // if options are more than one, check if all options are false
@@ -221,13 +209,12 @@ function processPlacecodeFiles(directory) {
           } else {
             // if the option is selected
             // Check if this code block has a depends marker
-            const dependsRegex = /RA:DEPENDS:\s*([^/\n\r]*)/;
-            const [dependsMatch] = match.match(dependsRegex) || [];
+            const [dependsMatch] = match.match(regex_depends_marker) || [];
 
             const dependsOnOptions = dependsMatch
               ? dependsMatch
                   .toString()
-                  .match(dependsRegex)?.[1]
+                  .match(regex_depends_marker)?.[1]
                   .split(/\s*,\s*/)
                   .filter(Boolean)
               : [];
@@ -288,9 +275,8 @@ function removeFiles(targetsArray, directory) {
 }
 
 function placeSnippets(content) {
-  const reusableCodePattern = /\/\/ RA:REUSE: (.+)/g;
   const reusableCodeFolder = "zplacecode/snippets";
-  const matches = [...content.matchAll(reusableCodePattern)];
+  const matches = [...content.matchAll(regex_reuse_marker)];
 
   for (const match of matches) {
     const filename = match[1];

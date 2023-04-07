@@ -9,6 +9,9 @@ const regex_start_marker = /RA:START:\s*([^/\n\r]*)/;
 // depends marker
 const regex_depends_marker = /RA:DEPENDS:\s*([^/\n\r]*)/;
 
+// reuse marker
+const regex_reuse_marker = /\/\/ RA:REUSE: (.+)/g;
+
 //depends with options
 const regex_depends_with_options = (dependsOnOptions) =>
   `// RA:DEPENDS:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`;
@@ -22,6 +25,9 @@ const regex_start_only_marker = /\/\/ RA:START:/g;
 // end only marker
 const regex_end_only_marker = /\/\/ RA:END/g;
 
+// how all markers start
+const regex_all_markers_start = "//";
+
 module.exports = {
   regex_start_to_end_options,
   regex_start_marker,
@@ -30,4 +36,6 @@ module.exports = {
   regex_all_markers,
   regex_start_only_marker,
   regex_end_only_marker,
+  regex_all_markers_start,
+  regex_reuse_marker,
 };

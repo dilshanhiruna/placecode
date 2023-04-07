@@ -2,9 +2,9 @@
   "name": "placecode",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "zplacecode/index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node zplacecode/index.js"
   },
   "author": "",
   "license": "ISC",
