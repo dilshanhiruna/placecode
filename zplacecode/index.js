@@ -1,14 +1,22 @@
-const { sourceDir, destDir } = require("./zpc.config.js");
+const { sourceDir, destDir, production } = require("./zpc.config.js");
 const checkCommentMarkers = require("./src/checker");
 const processPlacecodeFiles = require("./src/forfiles");
 const generateTemplate = require("./src/forcontent");
+const fs = require("fs-extra");
 
 function main() {
-  if (!checkCommentMarkers(sourceDir)) {
-    // make a copy of the source code
-    fs.copySync(sourceDir, destDir);
-    processPlacecodeFiles(destDir);
-    generateTemplate(destDir);
+  if (production) {
+    if (!checkCommentMarkers(sourceDir)) {
+      processPlacecodeFiles(sourceDir);
+      generateTemplate(sourceDir);
+    }
+  } else {
+    if (!checkCommentMarkers(sourceDir)) {
+      // make a copy of the source code
+      fs.copySync(sourceDir, destDir);
+      processPlacecodeFiles(destDir);
+      generateTemplate(destDir);
+    }
   }
 }
 

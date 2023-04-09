@@ -1,13 +1,12 @@
 const path = require("path");
 const { exec } = require("child_process");
 const os = require("os");
-const fs = require("fs-extra");
 
 const folderName = "zplacecode"; // Change this to the name of the folder you want to copy
 
 const packageFolder = path.join(__dirname, "..");
 const sourceFolder = path.join(packageFolder, folderName);
-const destFolder = path.join(process.cwd(), `${folderName}_copy`);
+const destFolder = path.join(process.cwd(), `${folderName}`);
 
 function copyDirectory(source, destination) {
   return new Promise((resolve, reject) => {
@@ -30,7 +29,6 @@ function copyDirectory(source, destination) {
 async function initPlacecode() {
   try {
     await copyDirectory(sourceFolder, destFolder);
-    console.log(`Folder '${folderName}' copied to '${destFolder}'`);
   } catch (error) {
     console.error("Error copying folder:", error);
   }

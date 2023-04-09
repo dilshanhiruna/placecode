@@ -7,7 +7,7 @@ const {
   regex_depends_with_options,
   regex_all_markers,
 } = require("./regex");
-const { selectedOptions } = require("../zpc.config.js");
+const { selectedOptions, ignore } = require("../zpc.config.js");
 const placeSnippets = require("./forsnippets");
 
 async function generateTemplate(dir) {
@@ -17,6 +17,10 @@ async function generateTemplate(dir) {
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
+      // check if the directory is in the ignore list
+      if (ignore.includes(file)) {
+        continue;
+      }
       generateTemplate(filePath);
     } else {
       // Read the file contents

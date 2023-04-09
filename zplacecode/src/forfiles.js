@@ -6,13 +6,17 @@ const {
   regex_depends_marker,
   regex_all_markers_start,
 } = require("./regex");
-const { zpc, selectedOptions } = require("../zpc.config.js");
+const { zpc, selectedOptions, ignore } = require("../zpc.config.js");
 
 function processPlacecodeFiles(directory) {
   try {
     // Get a list of files and folders in the current directory
     const files = fs.readdirSync(directory);
 
+    // check if the directory is in the ignore list
+    if (ignore.includes(files)) {
+      return;
+    }
     // Check for the existence of a zpc.txt file
     if (files.includes(zpc)) {
       const placecodePath = path.join(directory, zpc);

@@ -1,6 +1,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 const { regex_start_only_marker, regex_end_only_marker } = require("./regex");
+const { ignore } = require("../zpc.config");
 
 function checkCommentMarkers(dir) {
   const files = fs.readdirSync(dir);
@@ -10,6 +11,11 @@ function checkCommentMarkers(dir) {
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
+      // check if the directory is in the ignore list
+      if (ignore.includes(file)) {
+        continue;
+      }
+
       errorFound = checkCommentMarkers(filePath) || errorFound;
     } else {
       // Read the file contents

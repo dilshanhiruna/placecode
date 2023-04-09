@@ -17,11 +17,4 @@ program
     console.log(`Running the project with argument: ${arg}`);
   });
 
-program
-  .command("connect <host> <port>")
-  .description("Connect to the specified host and port")
-  .action((host, port) => {
-    console.log(`Connecting to ${host}:${port}`);
-  });
-
 program.parse(process.argv);

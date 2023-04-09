@@ -1,8 +1,11 @@
 module.exports = {
-  sourceDir: "./templates",
+  sourceDir: "./",
   destDir: "./output",
   zpc: "zpc.txt",
+  mainDir: "zplacecode",
   snippetsDir: "zplacecode/snippets",
+  ignore: ["zplacecode", "node_modules", "bin", "dist", "docs", ".git"],
+  production: false,
   selectedOptions: {
     option1: true,
     option2: true,
