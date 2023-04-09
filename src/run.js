@@ -1,16 +1,6 @@
-const admin = require("firebase-admin");
 const path = require("path");
 const fs = require("fs-extra");
 const { spawnSync } = require("child_process");
-
-const serviceAccount = require("./path/to/serviceAccountKey.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://<DATABASE_NAME>.firebaseio.com",
-});
-
-const db = admin.firestore();
 
 // Helper function to clone a Git repository
 function cloneRepo(repoUrl, destDir) {
@@ -69,3 +59,5 @@ async function run() {
 
   console.log("Template generation complete!");
 }
+
+module.exports = run;

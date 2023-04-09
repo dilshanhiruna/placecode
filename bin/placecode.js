@@ -2,6 +2,7 @@
 
 const { program } = require("commander");
 const initPlacecode = require("../src/init");
+const run = require("../src/run");
 
 program
   .command("init")
@@ -14,7 +15,7 @@ program
   .command("run <arg>")
   .description("Run the project with the specified argument")
   .action((arg) => {
-    console.log(`Running the project with argument: ${arg}`);
+    run();
   });
 
 program.parse(process.argv);
