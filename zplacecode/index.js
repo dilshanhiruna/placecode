@@ -1,5 +1,3 @@
-const fs = require("fs-extra");
-
 const { sourceDir, destDir } = require("./zpc.config.js");
 const checkCommentMarkers = require("./src/checker");
 const processPlacecodeFiles = require("./src/forfiles");
