@@ -1,10 +1,10 @@
 {
   "name": "placecode",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "dynamic template generator",
   "main": "zplacecode/index.js",
   "bin": {
-    "placecode": "bin/placecode"
+    "placecode": "./bin/placecode.js"
   },
   "scripts": {
     "start": "node zplacecode/index.js"
