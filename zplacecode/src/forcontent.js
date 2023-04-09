@@ -1,45 +1,38 @@
 const fs = require("fs-extra");
 const path = require("path");
-
-// Define the selected options here
-const selectedOptions = {
-  option1: true,
-  option2: true,
-  option3: true,
-  option4: true,
-  option5: true,
-  option6: true,
-  option7: false,
-  option8: false,
-  option9: true,
-};
-
-// Define the source and destination directories
-const sourceDir = "./templates";
-const destDir = "./output";
+const {
+  regex_start_to_end_options,
+  regex_start_marker,
+  regex_depends_marker,
+  regex_depends_with_options,
+  regex_all_markers,
+} = require("./regex");
+const { selectedOptions, ignore } = require("../config.json");
+const placeSnippets = require("./forsnippets");
 
 async function generateTemplate(dir) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
     const filePath = path.join(dir, file);
-    console.log(filePath);
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
+      // check if the directory is in the ignore list
+      if (ignore.includes(file)) {
+        continue;
+      }
       generateTemplate(filePath);
     } else {
       // Read the file contents
       let content = fs.readFileSync(filePath, "utf8");
 
+      content = placeSnippets(content);
+
       // Loop through each option and remove the unselected blocks
       for (const [option, isSelected] of Array.from(
         Object.entries(selectedOptions)
       )) {
-        const pattern = new RegExp(
-          // `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}\\s*`,
-          `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}.*(?:\r?\n|$)`,
-          "g"
-        );
+        const pattern = new RegExp(regex_start_to_end_options(option), "g");
 
         // Get the code block that matches the pattern
         const codeBlocks = content.match(pattern) || [];
@@ -48,12 +41,9 @@ async function generateTemplate(dir) {
           if (!isSelected) {
             // if the option is selected
 
-            // Get the options from the start marker
-            const regex = /RA:START:\s*([^/\n\r]*)/;
-
             const options = codeBlock
               .toString()
-              .match(regex)?.[1]
+              .match(regex_start_marker)?.[1]
               .split(/\s*,\s*/);
 
             // if options are more than one, check if all options are false
@@ -73,13 +63,12 @@ async function generateTemplate(dir) {
           } else {
             // if the option is selected
             // Check if this code block has a depends marker
-            const dependsRegex = /RA:DEPENDS:\s*([^/\n\r]*)/;
-            const [dependsMatch] = codeBlock.match(dependsRegex) || [];
+            const [dependsMatch] = codeBlock.match(regex_depends_marker) || [];
 
             const dependsOnOptions = dependsMatch
               ? dependsMatch
                   .toString()
-                  .match(dependsRegex)?.[1]
+                  .match(regex_depends_marker)?.[1]
                   .split(/\s*,\s*/)
                   .filter(Boolean)
               : [];
@@ -96,17 +85,13 @@ async function generateTemplate(dir) {
               );
 
               const dependRegex = new RegExp(
-                `// RA:DEPENDS:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`
+                regex_depends_with_options(dependsOnOptions)
               );
-
-              // console.log(areAllDependenciesSelected);
 
               if (!areAllDependenciesSelected) {
                 // remove only the code block that has the depends marker
                 for (match of codeBlock.match(pattern)) {
                   if (dependRegex.test(match)) {
-                    // console.log(dependsOnOptions);
-                    // console.log(match);
                     // Remove the code block
                     content = content.replace(match, "");
                   }
@@ -118,8 +103,7 @@ async function generateTemplate(dir) {
       }
 
       // Remove all comment markers
-      const markerPattern = /\/\/ RA:(START|END|DEPENDS)[^\r\n]*\r?\n/g;
-      content = content.replace(markerPattern, "");
+      content = content.replace(regex_all_markers, "");
 
       // Write the modified file contents back to the file
       fs.writeFileSync(filePath, content, "utf8");
@@ -127,40 +111,4 @@ async function generateTemplate(dir) {
   }
 }
 
-function checkCommentMarkers(dir) {
-  const files = fs.readdirSync(dir);
-  let errorFound = false;
-  for (const file of files) {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
-    // check if the file is a directory
-    if (stat.isDirectory()) {
-      errorFound = checkCommentMarkers(filePath) || errorFound;
-    } else {
-      // Read the file contents
-      let content = fs.readFileSync(filePath, "utf8");
-
-      const startCount = (content.match(/\/\/ RA:START:/g) || []).length;
-      const endCount = (content.match(/\/\/ RA:END/g) || []).length;
-
-      if (startCount !== endCount) {
-        console.error(`\nMarkers do not match`);
-        console.error(`Error in file '${filePath}'`);
-        errorFound = true;
-        break;
-      }
-    }
-  }
-  return errorFound;
-}
-
-function main() {
-  if (!checkCommentMarkers(sourceDir)) {
-    // Recursively copy the source directory to the destination directory
-    fs.copySync(sourceDir, destDir);
-
-    generateTemplate(destDir);
-  }
-}
-
-main();
+module.exports = generateTemplate;
