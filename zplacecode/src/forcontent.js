@@ -7,7 +7,7 @@ const {
   regex_depends_with_options,
   regex_all_markers,
 } = require("./regex");
-const { selectedOptions, ignore } = require("../zpc.config.js");
+const { selectedOptions, ignore } = require("../config.json");
 const placeSnippets = require("./forsnippets");
 
 async function generateTemplate(dir) {

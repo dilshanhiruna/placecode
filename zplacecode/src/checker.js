@@ -1,7 +1,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 const { regex_start_only_marker, regex_end_only_marker } = require("./regex");
-const { ignore } = require("../zpc.config");
+const { ignore } = require("../config.json");
 
 function checkCommentMarkers(dir) {
   const files = fs.readdirSync(dir);

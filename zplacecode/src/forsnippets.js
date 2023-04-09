@@ -1,7 +1,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 const { regex_reuse_marker } = require("./regex");
-const { snippetsDir } = require("../zpc.config.js");
+const { snippetsDir } = require("../config.json");
 
 function placeSnippets(content) {
   const matches = [...content.matchAll(regex_reuse_marker)];

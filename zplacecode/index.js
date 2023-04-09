@@ -1,4 +1,4 @@
-const { sourceDir, destDir, production } = require("./zpc.config.js");
+const { sourceDir, destDir, production } = require("./config.json");
 const checkCommentMarkers = require("./src/checker");
 const processPlacecodeFiles = require("./src/forfiles");
 const generateTemplate = require("./src/forcontent");
