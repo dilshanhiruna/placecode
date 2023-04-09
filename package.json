@@ -7,7 +7,7 @@
     "placecode": "./bin/placecode.js"
   },
   "scripts": {
-    "start": "node zplacecode/index.js"
+    "zpc": "node zplacecode/index.js"
   },
   "author": "dilshanhiruna",
   "license": "ISC",
