@@ -21,7 +21,7 @@ async function generateTemplate(dir, selectedOptions) {
       if (ignore.includes(file)) {
         continue;
       }
-      generateTemplate(filePath);
+      generateTemplate(filePath, selectedOptions);
     } else {
       // Read the file contents
       let content = fs.readFileSync(filePath, "utf8");

@@ -11,7 +11,7 @@
   },
   "option3": {
     "description": "Description of option 3",
-    "enabled": false
+    "enabled": true
   },
   "option4": {
     "description": "Description of option 4",
@@ -36,6 +36,6 @@
   },
   "option9": {
     "description": "Description of option 9",
-    "enabled": false
+    "enabled": true
   }
 }

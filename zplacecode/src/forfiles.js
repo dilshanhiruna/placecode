@@ -106,7 +106,7 @@ function processPlacecodeFiles(directory, selectedOptions) {
       const filePath = path.join(directory, file);
 
       if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-        processPlacecodeFiles(filePath);
+        processPlacecodeFiles(filePath, selectedOptions);
       }
     }
   } catch (error) {
