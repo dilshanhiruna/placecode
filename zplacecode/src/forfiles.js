@@ -6,9 +6,9 @@ const {
   regex_depends_marker,
   regex_all_markers_start,
 } = require("./regex");
-const { zpc, selectedOptions, ignore } = require("../config.json");
+const { zpc, ignore } = require("../config.json");
 
-function processPlacecodeFiles(directory) {
+function processPlacecodeFiles(directory, selectedOptions) {
   try {
     // Get a list of files and folders in the current directory
     const files = fs.readdirSync(directory);

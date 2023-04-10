@@ -7,10 +7,10 @@ const {
   regex_depends_with_options,
   regex_all_markers,
 } = require("./regex");
-const { selectedOptions, ignore } = require("../config.json");
+const { ignore } = require("../config.json");
 const placeSnippets = require("./forsnippets");
 
-async function generateTemplate(dir) {
+async function generateTemplate(dir, selectedOptions) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
     const filePath = path.join(dir, file);

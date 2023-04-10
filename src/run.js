@@ -14,6 +14,10 @@ function moveFiles(sourceDir, destDir) {
   const gitDir = path.join(sourceDir, ".git");
   fs.removeSync(gitDir);
 
+  // remove zplacecode folder
+  const zpcDir = path.join(sourceDir, "zplacecode");
+  fs.removeSync(zpcDir);
+
   fs.readdirSync(sourceDir).forEach((file) => {
     const sourceFile = path.join(sourceDir, file);
     const destFile = path.join(destDir, file);
@@ -25,29 +29,53 @@ async function run() {
   const { destDir, options, repo } = {
     destDir: "D:\\Personal Projects\\placecode-test",
     options: {
-      option1: true,
-      option2: true,
-      option3: true,
-      option4: true,
-      option5: true,
-      option6: true,
-      option7: true,
-      option8: true,
-      option9: true,
+      option1: {
+        enabled: true,
+      },
+      option2: {
+        enabled: true,
+      },
+      option3: {
+        enabled: false,
+      },
+      option4: {
+        enabled: true,
+      },
+      option5: {
+        enabled: true,
+      },
+      option6: {
+        enabled: true,
+      },
+      option7: {
+        enabled: true,
+      },
+      option8: {
+        enabled: true,
+      },
+      option9: {
+        enabled: true,
+      },
     },
     repo: "https://github.com/dilshanhiruna/placecode",
   };
 
-  // Clone the repository into the template directory
   const templateDir = path.join(__dirname, "../templates");
+  // clean the template directory
+  fs.emptyDirSync(templateDir);
+  // Clone the repository into the template directory
   cloneRepo(repo, templateDir);
 
-  // Update the placecode config file options
+  // Update the placecode config file
   const configFilePath = path.join(templateDir, "zplacecode/config.json");
   const configFile = fs.readJsonSync(configFilePath);
-  configFile.selectedOptions = options;
   configFile.production = true;
   fs.writeJsonSync(configFilePath, configFile);
+
+  //update the placecode options file
+  const optionsFilePath = path.join(templateDir, "zplacecode/options.json");
+  const optionsFile = fs.readJsonSync(optionsFilePath);
+  fs.writeFileSync(optionsFilePath, JSON.stringify(options, null, 2));
 
   if (os.platform() === "win32") {
     // Run the placecode process
@@ -56,14 +84,11 @@ async function run() {
       stdio: "inherit",
     });
 
-    if (child.error) {
-      console.error(child.error);
-      process.exit(1);
-    } else {
-      // Move the generated files to the destination directory
+    if (child.status === 0) {
       moveFiles(templateDir, destDir);
-
       console.log("Template generation complete!");
+    } else {
+      console.log("Template generation failed.");
     }
   } else {
     const child = spawnSync("npm", ["run", "zpc"], {
@@ -71,14 +96,11 @@ async function run() {
       stdio: "inherit",
     });
 
-    if (child.error) {
-      console.error(child.error);
-      process.exit(1);
-    } else {
-      // Move the generated files to the destination directory
+    if (child.status === 0) {
       moveFiles(templateDir, destDir);
-
       console.log("Template generation complete!");
+    } else {
+      console.log("Template generation failed.");
     }
   }
 }
