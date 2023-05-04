@@ -1,6 +1,5 @@
 const path = require("path");
 const fs = require("fs-extra");
-const os = require("os");
 const { spawnSync } = require("child_process");
 
 // Helper function to clone a Git repository
@@ -26,8 +25,7 @@ function moveFiles(sourceDir, destDir) {
 }
 
 async function run() {
-  const { destDir, options, repo } = {
-    destDir: "D:\\Personal Projects\\placecode-test",
+  const { options, repo } = {
     options: {
       option1: {
         enabled: true,
@@ -74,34 +72,21 @@ async function run() {
 
   //update the placecode options file
   const optionsFilePath = path.join(templateDir, "zplacecode/options.json");
-  const optionsFile = fs.readJsonSync(optionsFilePath);
   fs.writeFileSync(optionsFilePath, JSON.stringify(options, null, 2));
 
-  if (os.platform() === "win32") {
-    // Run the placecode process
-    const child = spawnSync("npm.cmd", ["run", "zpc"], {
-      cwd: path.join(__dirname, "..", "templates"),
-      stdio: "inherit",
-    });
+  const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
 
-    if (child.status === 0) {
-      moveFiles(templateDir, destDir);
-      console.log("Template generation complete!");
-    } else {
-      console.log("Template generation failed.");
-    }
+  // Run the placecode process
+  const child = spawnSync(npmCmd, ["run", "zpc"], {
+    cwd: path.join(__dirname, "..", "templates"),
+    stdio: "inherit",
+  });
+
+  if (child.status === 0) {
+    moveFiles(templateDir, process.cwd());
+    console.log("Template generation complete!");
   } else {
-    const child = spawnSync("npm", ["run", "zpc"], {
-      cwd: path.join(__dirname, "..", "templates"),
-      stdio: "inherit",
-    });
-
-    if (child.status === 0) {
-      moveFiles(templateDir, destDir);
-      console.log("Template generation complete!");
-    } else {
-      console.log("Template generation failed.");
-    }
+    console.log("Template generation failed.");
   }
 }
 
