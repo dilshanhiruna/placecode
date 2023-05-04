@@ -1,6 +1,6 @@
 {
   "name": "placecode",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "dynamic template generator",
   "main": "zplacecode/index.js",
   "bin": {
