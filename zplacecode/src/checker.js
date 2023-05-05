@@ -7,15 +7,14 @@ function checkCommentMarkers(dir) {
   const files = fs.readdirSync(dir);
   let errorFound = false;
   for (const file of files) {
+    // check if the directory is in the ignore list
+    if (ignore.includes(file)) {
+      continue;
+    }
     const filePath = path.join(dir, file);
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
-      // check if the directory is in the ignore list
-      if (ignore.includes(file)) {
-        continue;
-      }
-
       errorFound = checkCommentMarkers(filePath) || errorFound;
     } else {
       // Read the file contents

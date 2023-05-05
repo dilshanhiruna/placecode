@@ -5,6 +5,8 @@ const {
   regex_start_marker,
   regex_depends_marker,
   regex_depends_with_options,
+  regex_file_ignore,
+  regex_zpc_lines_start,
 } = require("./regex");
 const { ignore } = require("../config.json");
 const placeSnippets = require("./forsnippets");
@@ -12,18 +14,23 @@ const placeSnippets = require("./forsnippets");
 async function blockComments(dir, selectedOptions) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
+    // check if the directory is in the ignore list
+    if (ignore.includes(file)) {
+      continue;
+    }
     const filePath = path.join(dir, file);
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
-      // check if the directory is in the ignore list
-      if (ignore.includes(file)) {
-        continue;
-      }
       blockComments(filePath, selectedOptions);
     } else {
       // Read the file contents
       let content = fs.readFileSync(filePath, "utf8");
+
+      // check if the file is already ignored
+      if (regex_file_ignore.test(content)) {
+        continue;
+      }
 
       // Place the snippets
       content = placeSnippets(content);
@@ -116,25 +123,12 @@ function commentCodeLines(codeBlock) {
   return codeBlock
     .split("\n")
     .map((line, i, arr) =>
-      /^(\s*\/\/|ZPC:)/.test(line)
+      regex_zpc_lines_start.test(line)
         ? line
         : i === arr.length - 1
         ? line
         : `// ${line}`
     )
-    .join("\n");
-}
-
-function uncommentCodeLines(codeBlock) {
-  return codeBlock
-    .split("\n")
-    .map((line) => {
-      if (/^(\s*\/\/\s*ZPC:)|^(\s*ZPC:)/.test(line)) {
-        // skip lines starting with "// ZPC:" or "ZPC:"
-        return line;
-      }
-      return line.replace(/^\s*\/\/\s*/, ""); // remove leading "// " from the line
-    })
     .join("\n");
 }
 

@@ -28,6 +28,16 @@ const regex_end_only_marker = /\/\/ ZPC:END/g;
 // how all markers start
 const regex_all_markers_start = "//";
 
+// file ignore regex
+const regex_file_ignore =
+  /\/\*\s*ZPC:\s*IGNOREFILE\s*|\s*ZPC:\s*IGNOREFILE\s*\*\//g;
+
+// lines starting with "// ZPC:" or "ZPC:"
+const regex_zpc_lines = /^(\s*\/\/\s*ZPC:)|^(\s*ZPC:)/;
+
+// lines starting with "// ZPC:"
+const regex_zpc_lines_start = /^(\s*\/\/|ZPC:)/;
+
 module.exports = {
   regex_start_to_end_options,
   regex_start_marker,
@@ -38,4 +48,7 @@ module.exports = {
   regex_end_only_marker,
   regex_all_markers_start,
   regex_reuse_marker,
+  regex_file_ignore,
+  regex_zpc_lines,
+  regex_zpc_lines_start,
 };

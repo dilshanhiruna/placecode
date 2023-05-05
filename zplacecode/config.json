@@ -2,5 +2,13 @@
   "sourceDir": "./templates",
   "destDir": "./output",
   "snippetsDir": "zplacecode/snippets",
-  "ignore": ["zplacecode", "node_modules", "bin", "dist", "docs", ".git"]
+  "ignore": [
+    "zplacecode",
+    "zpc.txt",
+    "node_modules",
+    "bin",
+    "dist",
+    "docs",
+    ".git"
+  ]
 }

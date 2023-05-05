@@ -4,6 +4,7 @@ const checkCommentMarkers = require("./src/checker");
 const processPlacecodeFiles = require("./src/forfiles");
 const generateTemplate = require("./src/forcontent");
 const blockComments = require("./src/blockcomments");
+const blockFiles = require("./src/blockfiles");
 const blockReset = require("./src/blockreset");
 
 function convertJsonOptions(input) {
@@ -33,6 +34,7 @@ function main() {
     }
   } else {
     blockReset(sourceDir, selectedOptions);
+    blockFiles(sourceDir, selectedOptions);
     blockComments(sourceDir, selectedOptions);
   }
 }

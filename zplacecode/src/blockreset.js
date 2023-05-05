@@ -1,20 +1,24 @@
 const fs = require("fs-extra");
 const path = require("path");
-const { regex_start_to_end_options } = require("./regex");
+const {
+  regex_start_to_end_options,
+  regex_file_ignore,
+  regex_zpc_lines,
+} = require("./regex");
 const { ignore } = require("../config.json");
 const placeSnippets = require("./forsnippets");
 
 async function blockReset(dir, selectedOptions) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
+    // check if the directory is in the ignore list
+    if (ignore.includes(file)) {
+      continue;
+    }
     const filePath = path.join(dir, file);
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
-      // check if the directory is in the ignore list
-      if (ignore.includes(file)) {
-        continue;
-      }
       blockReset(filePath, selectedOptions);
     } else {
       // Read the file contents
@@ -22,6 +26,9 @@ async function blockReset(dir, selectedOptions) {
 
       // Place the snippets
       content = placeSnippets(content);
+
+      // remove ignorefile comments if any
+      content = content.replace(regex_file_ignore, "");
 
       // Loop through each option and remove the unselected blocks
       for (const [option, isSelected] of Array.from(
@@ -49,7 +56,7 @@ function uncommentCodeLines(codeBlock) {
   return codeBlock
     .split("\n")
     .map((line) => {
-      if (/^(\s*\/\/\s*ZPC:)|^(\s*ZPC:)/.test(line)) {
+      if (regex_zpc_lines.test(line)) {
         // skip lines starting with "// ZPC:" or "ZPC:"
         return line;
       }

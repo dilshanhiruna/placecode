@@ -13,14 +13,14 @@ const placeSnippets = require("./forsnippets");
 async function generateTemplate(dir, selectedOptions) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
+    // check if the directory is in the ignore list
+    if (ignore.includes(file)) {
+      continue;
+    }
     const filePath = path.join(dir, file);
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
-      // check if the directory is in the ignore list
-      if (ignore.includes(file)) {
-        continue;
-      }
       generateTemplate(filePath, selectedOptions);
     } else {
       // Read the file contents
