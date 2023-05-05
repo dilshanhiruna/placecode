@@ -71,7 +71,7 @@ async function run() {
   const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
 
   // Run the placecode process
-  const child = spawnSync(npmCmd, ["run", "zpc"], {
+  const child = spawnSync(npmCmd, ["run", "zpc:rm"], {
     cwd: path.join(__dirname, "..", "templates"),
     stdio: "inherit",
   });
