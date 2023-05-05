@@ -1,15 +1,17 @@
 {
   "option1": {
     "description": "Description of option 1",
-    "enabled": true
+    "depends": ["option2", "option3"],
+    "enabled": false
   },
   "option2": {
     "description": "Description of option 2",
+    "depends": ["option3"],
     "enabled": true
   },
   "option3": {
     "description": "Description of option 3",
-    "enabled": false
+    "enabled": true
   },
   "option4": {
     "description": "Description of option 4",
@@ -25,6 +27,7 @@
   },
   "option7": {
     "description": "Description of option 7",
+    "depends": ["option8", "option9"],
     "enabled": true
   },
   "option8": {

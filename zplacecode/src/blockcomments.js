@@ -5,12 +5,13 @@ const {
   regex_start_marker,
   regex_depends_marker,
   regex_depends_with_options,
-  regex_all_markers,
+  regex_file_ignore,
+  regex_zpc_lines_start,
 } = require("./regex");
 const { ignore } = require("../config.json");
 const placeSnippets = require("./forsnippets");
 
-async function generateTemplate(dir, selectedOptions) {
+async function blockComments(dir, selectedOptions) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
     // check if the directory is in the ignore list
@@ -21,10 +22,15 @@ async function generateTemplate(dir, selectedOptions) {
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
-      generateTemplate(filePath, selectedOptions);
+      blockComments(filePath, selectedOptions);
     } else {
       // Read the file contents
       let content = fs.readFileSync(filePath, "utf8");
+
+      // check if the file is already ignored
+      if (regex_file_ignore.test(content)) {
+        continue;
+      }
 
       // Place the snippets
       content = placeSnippets(content);
@@ -55,11 +61,14 @@ async function generateTemplate(dir, selectedOptions) {
               });
 
               if (allOptionsFalse) {
-                content = content.replace(pattern, "");
+                // Comment out all lines in the code block
+                const commentedBlock = commentCodeLines(codeBlock);
+                content = content.replace(codeBlock, commentedBlock);
               }
             } else {
-              // if only one option, remove the code block
-              content = content.replace(pattern, "");
+              // Comment out all lines in the code block
+              const commentedBlock = commentCodeLines(codeBlock);
+              content = content.replace(codeBlock, commentedBlock);
             }
           } else {
             // if the option is selected
@@ -93,8 +102,9 @@ async function generateTemplate(dir, selectedOptions) {
                 // remove only the code block that has the depends marker
                 for (match of codeBlock.match(pattern)) {
                   if (dependRegex.test(match)) {
-                    // Remove the code block
-                    content = content.replace(match, "");
+                    // Comment out all lines in the code block
+                    const commentedBlock = commentCodeLines(match);
+                    content = content.replace(match, commentedBlock);
                   }
                 }
               }
@@ -103,13 +113,23 @@ async function generateTemplate(dir, selectedOptions) {
         }
       }
 
-      // Remove all comment markers
-      content = content.replace(regex_all_markers, "");
-
       // Write the modified file contents back to the file
       fs.writeFileSync(filePath, content, "utf8");
     }
   }
 }
 
-module.exports = generateTemplate;
+function commentCodeLines(codeBlock) {
+  return codeBlock
+    .split("\n")
+    .map((line, i, arr) =>
+      regex_zpc_lines_start.test(line)
+        ? line
+        : i === arr.length - 1
+        ? line
+        : `// ${line}`
+    )
+    .join("\n");
+}
+
+module.exports = blockComments;

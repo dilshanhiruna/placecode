@@ -3,12 +3,14 @@
 const path = require("path");
 const { exec } = require("child_process");
 const os = require("os");
+const fs = require("fs-extra");
+const { spawnSync } = require("child_process");
 
-const folderName = "zplacecode"; // Change this to the name of the folder you want to copy
+const folderName = "zplacecode";
 
-const packageFolder = path.join(__dirname, "..");
-const sourceFolder = path.join(packageFolder, folderName);
-const destFolder = path.join(process.cwd(), `${folderName}`);
+const packageDir = path.join(__dirname, "..");
+const sourceDir = path.join(packageDir, folderName);
+const destDir = path.join(process.cwd(), `${folderName}`);
 
 function copyDirectory(source, destination) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,30 @@ function copyDirectory(source, destination) {
 
 async function initPlacecode() {
   try {
-    await copyDirectory(sourceFolder, destFolder);
+    await copyDirectory(sourceDir, destDir);
+
+    const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
+
+    const child = spawnSync(npmCmd, ["i", "fs-extra"], {
+      cwd: process.cwd(),
+      stdio: "inherit",
+    });
+
+    if (child.error) {
+      console.error(child.error);
+      process.exit(1);
+    }
+
+    // Read package.json
+    const packageJsonPath = path.join(process.cwd(), "package.json");
+    const packageJson = await fs.readJson(packageJsonPath);
+
+    // Add "zpc" script
+    packageJson.scripts = packageJson.scripts || {};
+    packageJson.scripts.zpc = "node zplacecode/index.js";
+
+    // Write package.json
+    await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
   } catch (error) {
     console.error("Error copying folder:", error);
   }

@@ -1,20 +1,14 @@
 {
-  "sourceDir": "./",
+  "sourceDir": "./templates",
   "destDir": "./output",
-  "zpc": "zpc.txt",
-  "mainDir": "zplacecode",
   "snippetsDir": "zplacecode/snippets",
-  "ignore": ["zplacecode", "node_modules", "bin", "dist", "docs", ".git"],
-  "production": false,
-  "selectedOptions": {
-    "option1": true,
-    "option2": true,
-    "option3": true,
-    "option4": true,
-    "option5": true,
-    "option6": true,
-    "option7": true,
-    "option8": true,
-    "option9": true
-  }
+  "ignore": [
+    "zplacecode",
+    "zpc.txt",
+    "node_modules",
+    "bin",
+    "dist",
+    "docs",
+    ".git"
+  ]
 }

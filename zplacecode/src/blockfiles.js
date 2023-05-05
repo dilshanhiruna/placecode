@@ -10,7 +10,7 @@ const { ignore } = require("../config.json");
 
 const zpc = "zpc.txt";
 
-function processPlacecodeFiles(directory, selectedOptions) {
+function blockFiles(directory, selectedOptions) {
   try {
     // Get a list of files and folders in the current directory
     const files = fs.readdirSync(directory);
@@ -62,10 +62,10 @@ function processPlacecodeFiles(directory, selectedOptions) {
               });
 
               if (allOptionsFalse) {
-                removeFiles(uniqueFiles, directory);
+                commentOutFiles(uniqueFiles, directory);
               }
             } else {
-              removeFiles(uniqueFiles, directory);
+              commentOutFiles(uniqueFiles, directory);
             }
           } else {
             // if the option is selected
@@ -93,22 +93,19 @@ function processPlacecodeFiles(directory, selectedOptions) {
 
               if (!areAllDependenciesSelected) {
                 // remove the files and folders
-                removeFiles(uniqueFiles, directory);
+                commentOutFiles(uniqueFiles, directory);
               }
             }
           }
         }
       }
-
-      // Remove the zpc.txt file
-      fs.unlink(placecodePath);
     }
     // Recursively process any subdirectories
     for (const file of files) {
       const filePath = path.join(directory, file);
 
       if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-        processPlacecodeFiles(filePath, selectedOptions);
+        blockFiles(filePath, selectedOptions);
       }
     }
   } catch (error) {
@@ -116,23 +113,24 @@ function processPlacecodeFiles(directory, selectedOptions) {
   }
 }
 
-function removeFiles(targetsArray, directory) {
-  // Remove the specified files and folders
+function commentOutFiles(targetsArray, directory) {
+  // Comment out the specified files
   for (const target of targetsArray) {
     const targetPath = path.join(directory, target);
     try {
       if (fs.existsSync(targetPath)) {
         const stats = fs.statSync(targetPath);
-        if (stats.isDirectory()) {
-          fs.rm(targetPath, { recursive: true });
-        } else {
-          fs.unlink(targetPath);
+        if (!stats.isDirectory()) {
+          // Comment out the file by adding a comment at the beginning and end of the file
+          const fileContents = fs.readFileSync(targetPath, "utf-8");
+          const commentedContents = `/* ZPC: IGNOREFILE\n${fileContents}\nZPC: IGNOREFILE */`;
+          fs.writeFileSync(targetPath, commentedContents, "utf-8");
         }
       }
     } catch (error) {
-      console.error(`Error removing ${targetPath}: ${error}`);
+      console.error(`Error commenting out ${targetPath}: ${error}`);
     }
   }
 }
 
-module.exports = processPlacecodeFiles;
+module.exports = blockFiles;

@@ -1,32 +1,42 @@
 // used in generateTemplate, processPlacecodeFiles
-// `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}\\s*`,
+// `// ZPC:START:.*${option}.*[\\s\\S]*?// ZPC:END:.*${option}\\s*`,
 const regex_start_to_end_options = (option) =>
-  `// RA:START:.*${option}.*[\\s\\S]*?// RA:END:.*${option}.*(?:\r?\n|$)`;
+  `// ZPC:START:.*${option}.*[\\s\\S]*?// ZPC:END:.*${option}.*(?:\r?\n|$)`;
 
 // start marker
-const regex_start_marker = /RA:START:\s*([^/\n\r]*)/;
+const regex_start_marker = /ZPC:START:\s*([^/\n\r]*)/;
 
 // depends marker
-const regex_depends_marker = /RA:DEPENDS:\s*([^/\n\r]*)/;
+const regex_depends_marker = /ZPC:DEPENDS:\s*([^/\n\r]*)/;
 
 // reuse marker
-const regex_reuse_marker = /\/\/ RA:REUSE: (.+)/g;
+const regex_reuse_marker = /\/\/ ZPC:REUSE: (.+)/g;
 
 //depends with options
 const regex_depends_with_options = (dependsOnOptions) =>
-  `// RA:DEPENDS:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`;
+  `// ZPC:DEPENDS:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`;
 
 // all markers
-const regex_all_markers = /\/\/ RA:(START|END|DEPENDS)[^\r\n]*\r?\n/g;
+const regex_all_markers = /\/\/ ZPC:(START|END|DEPENDS)[^\r\n]*\r?\n/g;
 
 // start only marker
-const regex_start_only_marker = /\/\/ RA:START:/g;
+const regex_start_only_marker = /\/\/ ZPC:START:/g;
 
 // end only marker
-const regex_end_only_marker = /\/\/ RA:END/g;
+const regex_end_only_marker = /\/\/ ZPC:END/g;
 
 // how all markers start
 const regex_all_markers_start = "//";
+
+// file ignore regex
+const regex_file_ignore =
+  /\/\*\s*ZPC:\s*IGNOREFILE\s*|\s*ZPC:\s*IGNOREFILE\s*\*\//g;
+
+// lines starting with "// ZPC:" or "ZPC:"
+const regex_zpc_lines = /^(\s*\/\/\s*ZPC:)|^(\s*ZPC:)/;
+
+// lines starting with "// ZPC:"
+const regex_zpc_lines_start = /^(\s*\/\/|ZPC:)/;
 
 module.exports = {
   regex_start_to_end_options,
@@ -38,4 +48,7 @@ module.exports = {
   regex_end_only_marker,
   regex_all_markers_start,
   regex_reuse_marker,
+  regex_file_ignore,
+  regex_zpc_lines,
+  regex_zpc_lines_start,
 };
