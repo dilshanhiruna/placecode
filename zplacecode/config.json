@@ -1,5 +1,5 @@
 {
-  "sourceDir": "./templates",
+  "sourceDir": "./",
   "destDir": "./output",
   "snippetsDir": "zplacecode/snippets",
   "ignore": [
