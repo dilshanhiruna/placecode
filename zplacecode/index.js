@@ -1,9 +1,10 @@
-const { sourceDir, destDir, production } = require("./config.json");
+const { sourceDir } = require("./config.json");
 const options = require("./options.json");
 const checkCommentMarkers = require("./src/checker");
 const processPlacecodeFiles = require("./src/forfiles");
 const generateTemplate = require("./src/forcontent");
-const fs = require("fs-extra");
+const blockComments = require("./src/blockcomments");
+const blockReset = require("./src/blockreset");
 
 function convertJsonOptions(input) {
   const output = {};
@@ -20,18 +21,19 @@ function convertJsonOptions(input) {
 function main() {
   const selectedOptions = convertJsonOptions(options);
 
-  if (production) {
+  const resetOnly = process.argv.includes("resetonly");
+  const remove = process.argv.includes("remove");
+
+  if (resetOnly) {
+    blockReset(sourceDir, selectedOptions);
+  } else if (remove) {
     if (!checkCommentMarkers(sourceDir)) {
       processPlacecodeFiles(sourceDir, selectedOptions);
       generateTemplate(sourceDir, selectedOptions);
     }
   } else {
-    if (!checkCommentMarkers(sourceDir)) {
-      // make a copy of the source code
-      fs.copySync(sourceDir, destDir);
-      processPlacecodeFiles(destDir, selectedOptions);
-      generateTemplate(destDir, selectedOptions);
-    }
+    blockReset(sourceDir, selectedOptions);
+    blockComments(sourceDir, selectedOptions);
   }
 }
 

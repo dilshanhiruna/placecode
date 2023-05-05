@@ -1,9 +1,6 @@
 {
-  "sourceDir": "./",
+  "sourceDir": "./templates",
   "destDir": "./output",
-  "zpc": "zpc.txt",
-  "mainDir": "zplacecode",
   "snippetsDir": "zplacecode/snippets",
-  "ignore": ["zplacecode", "node_modules", "bin", "dist", "docs", ".git"],
-  "production": false
+  "ignore": ["zplacecode", "node_modules", "bin", "dist", "docs", ".git"]
 }

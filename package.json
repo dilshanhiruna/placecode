@@ -7,7 +7,9 @@
     "placecode": "./bin/placecode.js"
   },
   "scripts": {
-    "zpc": "node zplacecode/index.js"
+    "zpc": "node zplacecode",
+    "zpc:re": "node zplacecode resetonly",
+    "zpc:rm": "node zplacecode remove"
   },
   "author": "dilshanhiruna",
   "license": "ISC",

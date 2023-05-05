@@ -6,7 +6,9 @@ const {
   regex_depends_marker,
   regex_all_markers_start,
 } = require("./regex");
-const { zpc, ignore } = require("../config.json");
+const { ignore } = require("../config.json");
+
+const zpc = "zpc.txt";
 
 function processPlacecodeFiles(directory, selectedOptions) {
   try {

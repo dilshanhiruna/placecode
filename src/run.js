@@ -64,12 +64,6 @@ async function run() {
   // Clone the repository into the template directory
   cloneRepo(repo, templateDir);
 
-  // Update the placecode config file
-  const configFilePath = path.join(templateDir, "zplacecode/config.json");
-  const configFile = fs.readJsonSync(configFilePath);
-  configFile.production = true;
-  fs.writeJsonSync(configFilePath, configFile);
-
   //update the placecode options file
   const optionsFilePath = path.join(templateDir, "zplacecode/options.json");
   fs.writeFileSync(optionsFilePath, JSON.stringify(options, null, 2));
