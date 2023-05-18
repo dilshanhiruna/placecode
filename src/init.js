@@ -52,7 +52,9 @@ async function initPlacecode() {
 
     // Add "zpc" script
     packageJson.scripts = packageJson.scripts || {};
-    packageJson.scripts.zpc = "node zplacecode/index.js";
+    packageJson.scripts["zpc"] = "node zplacecode";
+    packageJson.scripts["zpc:re"] = "node zplacecode resetonly";
+    packageJson.scripts["zpc:rm"] = "node zplacecode remove";
 
     // Write package.json
     await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
