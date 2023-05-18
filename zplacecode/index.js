@@ -9,12 +9,13 @@ const blockReset = require("./src/blockreset");
 
 function convertJsonOptions(input) {
   const output = {};
-  for (const [category, options] of Object.entries(input)) {
-    for (const [key, value] of Object.entries(options)) {
-      if (value.enabled !== false) {
-        output[key] = true;
+  for (const [category, categoryData] of Object.entries(input)) {
+    const features = categoryData.features || {};
+    for (const [option, optionData] of Object.entries(features)) {
+      if (optionData.enabled !== false) {
+        output[option] = true;
       } else {
-        output[key] = false;
+        output[option] = false;
       }
     }
   }

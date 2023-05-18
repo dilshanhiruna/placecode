@@ -1,62 +1,83 @@
 {
   "category1": {
-    "option1": {
-      "description": "Description of option 1",
-      "depend_features": ["option2", "option3"],
-      "depend_categories": ["category2"],
-      "enabled": true
-    },
-    "option2": {
-      "description": "Description of option 2",
-      "depend_features": ["option3"],
-      "depend_categories": [],
-      "enabled": false
-    },
-    "option3": {
-      "description": "Description of option 3",
-      "depend_features": [],
-      "depend_categories": [],
-      "enabled": true
+    "label": "Category 1",
+    "description": "Description of category 1",
+    "features": {
+      "option1": {
+        "label": "Option 1",
+        "description": "Description of option 1",
+        "depend_features": ["option2", "option3"],
+        "depend_categories": ["category2"],
+        "enabled": false
+      },
+      "option2": {
+        "label": "Option 2",
+        "description": "Description of option 2",
+        "depend_features": ["option3"],
+        "depend_categories": [],
+        "enabled": true
+      },
+      "option3": {
+        "label": "Option 3",
+        "description": "Description of option 3",
+        "depend_features": [],
+        "depend_categories": [],
+        "enabled": true
+      }
     }
   },
   "category2": {
-    "option4": {
-      "description": "Description of option 4",
-      "depend_features": [],
-      "depend_categories": [],
-      "enabled": true
-    },
-    "option5": {
-      "description": "Description of option 5",
-      "depend_features": [],
-      "depend_categories": [],
-      "enabled": true
-    },
-    "option6": {
-      "description": "Description of option 6",
-      "depend_features": [],
-      "depend_categories": [],
-      "enabled": true
+    "label": "Category 2",
+    "description": "Description of category 2",
+    "features": {
+      "option4": {
+        "label": "Option 4",
+        "description": "Description of option 4",
+        "depend_features": [],
+        "depend_categories": [],
+        "enabled": true
+      },
+      "option5": {
+        "label": "Option 5",
+        "description": "Description of option 5",
+        "depend_features": [],
+        "depend_categories": [],
+        "enabled": true
+      },
+      "option6": {
+        "label": "Option 6",
+        "description": "Description of option 6",
+        "depend_features": [],
+        "depend_categories": [],
+        "enabled": true
+      }
     }
   },
   "category3": {
-    "option7": {
-      "description": "Description of option 7",
-      "depend_features": ["option8", "option9"],
-      "depend_categories": [],
-      "enabled": true
-    },
-    "option8": {
-      "description": "Description of option 8",
-      "depend_features": [],
-      "depend_categories": [],
-      "enabled": true
-    },
-    "option9": {
-      "description": "Description of option 9",
-      "depend_features": [],
-      "depend_categories": [],
-      "enabled": true
+    "label": "Category 3",
+    "description": "Description of category 3",
+    "features": {
+      "option7": {
+        "label": "Option 7",
+        "description": "Description of option 7",
+        "depend_features": ["option8", "option9"],
+        "depend_categories": [],
+        "enabled": true
+      },
+      "option8": {
+        "label": "Option 8",
+        "description": "Description of option 8",
+        "depend_features": [],
+        "depend_categories": [],
+        "enabled": true
+      },
+      "option9": {
+        "label": "Option 9",
+        "description": "Description of option 9",
+        "depend_features": [],
+        "depend_categories": [],
+        "enabled": true
+      }
     }
   }
 }
