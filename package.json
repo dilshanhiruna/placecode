@@ -2,14 +2,9 @@
   "name": "placecode",
   "version": "1.0.0",
   "description": "dynamic template generator",
-  "main": "zplacecode/index.js",
+  "main": "placecode/index.js",
   "bin": {
     "placecode": "./bin/placecode.js"
-  },
-  "scripts": {
-    "zpc": "node zplacecode",
-    "zpc:re": "node zplacecode resetonly",
-    "zpc:rm": "node zplacecode remove"
   },
   "author": "dilshanhiruna",
   "license": "ISC",

@@ -13,8 +13,8 @@ function moveFiles(sourceDir, destDir) {
   const gitDir = path.join(sourceDir, ".git");
   fs.removeSync(gitDir);
 
-  // remove zplacecode folder
-  const zpcDir = path.join(sourceDir, "zplacecode");
+  // remove placecode folder
+  const zpcDir = path.join(sourceDir, "placecode");
   fs.removeSync(zpcDir);
 
   fs.readdirSync(sourceDir).forEach((file) => {
@@ -24,7 +24,7 @@ function moveFiles(sourceDir, destDir) {
   });
 }
 
-async function run() {
+async function get(arg) {
   const { options, repo } = {
     options: {
       option1: {
@@ -65,13 +65,11 @@ async function run() {
   cloneRepo(repo, templateDir);
 
   //update the placecode options file
-  const optionsFilePath = path.join(templateDir, "zplacecode/options.json");
+  const optionsFilePath = path.join(templateDir, "placecode/options.json");
   fs.writeFileSync(optionsFilePath, JSON.stringify(options, null, 2));
 
-  const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
-
   // Run the placecode process
-  const child = spawnSync(npmCmd, ["run", "zpc:rm"], {
+  const child = spawnSync("node", ["placecode", "remove"], {
     cwd: path.join(__dirname, "..", "templates"),
     stdio: "inherit",
   });
@@ -84,4 +82,4 @@ async function run() {
   }
 }
 
-module.exports = run;
+module.exports = get;

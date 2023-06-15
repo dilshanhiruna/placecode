@@ -6,11 +6,11 @@ const os = require("os");
 const fs = require("fs-extra");
 const { spawnSync } = require("child_process");
 
-const folderName = "zplacecode";
+const folderName = "placecode";
 
 const packageDir = path.join(__dirname, "..");
 const sourceDir = path.join(packageDir, folderName);
-const destDir = path.join(process.cwd(), `${folderName}`);
+const destDir = path.join(process.cwd(), `.${folderName}`);
 
 function copyDirectory(source, destination) {
   return new Promise((resolve, reject) => {
@@ -30,9 +30,22 @@ function copyDirectory(source, destination) {
   });
 }
 
+function setHiddenAttribute(path) {
+  const command = `attrib +h "${path}"`;
+
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.error("Error setting hidden attribute:", error);
+    }
+  });
+}
+
 async function initPlacecode() {
   try {
     await copyDirectory(sourceDir, destDir);
+
+    // Set hidden attribute for .placecode folder
+    setHiddenAttribute(destDir);
 
     const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
 
@@ -45,19 +58,6 @@ async function initPlacecode() {
       console.error(child.error);
       process.exit(1);
     }
-
-    // Read package.json
-    const packageJsonPath = path.join(process.cwd(), "package.json");
-    const packageJson = await fs.readJson(packageJsonPath);
-
-    // Add "zpc" script
-    packageJson.scripts = packageJson.scripts || {};
-    packageJson.scripts["zpc"] = "node zplacecode";
-    packageJson.scripts["zpc:re"] = "node zplacecode resetonly";
-    packageJson.scripts["zpc:rm"] = "node zplacecode remove";
-
-    // Write package.json
-    await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
   } catch (error) {
     console.error("Error copying folder:", error);
   }
