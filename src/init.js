@@ -10,7 +10,7 @@ const folderName = "placecode";
 
 const packageDir = path.join(__dirname, "..");
 const sourceDir = path.join(packageDir, folderName);
-const destDir = path.join(process.cwd(), `.${folderName}`);
+const destDir = path.join(process.cwd(), `${folderName}`);
 
 function copyDirectory(source, destination) {
   return new Promise((resolve, reject) => {
@@ -43,9 +43,6 @@ function setHiddenAttribute(path) {
 async function initPlacecode() {
   try {
     await copyDirectory(sourceDir, destDir);
-
-    // Set hidden attribute for .placecode folder
-    setHiddenAttribute(destDir);
 
     const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
 
