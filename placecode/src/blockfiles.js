@@ -62,10 +62,10 @@ function blockFiles(directory, selectedOptions) {
               });
 
               if (allOptionsFalse) {
-                commentOutFiles(uniqueFiles, directory);
+                moveFilesnFolders(uniqueFiles, directory);
               }
             } else {
-              commentOutFiles(uniqueFiles, directory);
+              moveFilesnFolders(uniqueFiles, directory);
             }
           } else {
             // if the option is selected
@@ -93,7 +93,7 @@ function blockFiles(directory, selectedOptions) {
 
               if (!areAllDependenciesSelected) {
                 // remove the files and folders
-                commentOutFiles(uniqueFiles, directory);
+                moveFilesnFolders(uniqueFiles, directory);
               }
             }
           }
@@ -112,24 +112,69 @@ function blockFiles(directory, selectedOptions) {
     console.error(`Error processing placecode files: ${error}`);
   }
 }
+function moveFilesnFolders(targetsArray, directory) {
+  const tempDirectory = path.join("placecode/temp");
+  const movedFilesData = [];
 
-function commentOutFiles(targetsArray, directory) {
-  // Comment out the specified files
-  for (const target of targetsArray) {
-    const targetPath = path.join(directory, target);
-    try {
-      if (fs.existsSync(targetPath)) {
-        const stats = fs.statSync(targetPath);
-        if (!stats.isDirectory()) {
-          // Comment out the file by adding a comment at the beginning and end of the file
-          const fileContents = fs.readFileSync(targetPath, "utf-8");
-          const commentedContents = `/* ZPC: IGNOREFILE\n${fileContents}\nZPC: IGNOREFILE */`;
-          fs.writeFileSync(targetPath, commentedContents, "utf-8");
-        }
+  try {
+    for (const target of targetsArray) {
+      const sourcePath = path.join(directory, target);
+
+      if (!fs.existsSync(sourcePath)) {
+        continue;
       }
-    } catch (error) {
-      console.error(`Error commenting out ${targetPath}: ${error}`);
+
+      // Generate a unique filename for the destination
+      const uniqueFilename = generateUniqueFilename(target);
+      const destinationPath = path.join(tempDirectory, uniqueFilename);
+
+      // Create the destination directory if it doesn't exist
+      const destinationDir = path.dirname(destinationPath);
+      fs.mkdirSync(destinationDir, { recursive: true });
+
+      // Move the file or folder to the temporary directory
+      fs.renameSync(sourcePath, destinationPath);
+
+      // Record the moved file and its original location
+      const movedFileData = {
+        file: target,
+        originalPath: path.join(sourcePath),
+        uniqueFilename: uniqueFilename,
+      };
+      movedFilesData.push(movedFileData);
     }
+  } catch (error) {
+    console.error(`Error moving files and folders to temp directory: ${error}`);
+  }
+
+  // Save the moved files data for future restoration
+  saveMovedFilesData(movedFilesData);
+}
+
+function generateUniqueFilename(filename) {
+  const timestamp = Date.now();
+  const randomString = Math.random().toString(36).substring(2, 16);
+  const uniqueFilename = `${timestamp}${randomString}_${filename}`;
+  return uniqueFilename;
+}
+
+function saveMovedFilesData(movedFilesData) {
+  const filePath = path.join("placecode/temp/temp_data.json");
+
+  try {
+    let existingData = [];
+
+    if (fs.existsSync(filePath)) {
+      const existingDataString = fs.readFileSync(filePath, "utf8");
+      existingData = JSON.parse(existingDataString);
+    }
+
+    const mergedData = existingData.concat(movedFilesData);
+    const mergedDataString = JSON.stringify(mergedData);
+
+    fs.writeFileSync(filePath, mergedDataString);
+  } catch (error) {
+    console.error(`Error saving moved files data: ${error}`);
   }
 }
 

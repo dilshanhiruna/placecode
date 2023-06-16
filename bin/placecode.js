@@ -33,11 +33,4 @@ program
     resetOnly();
   });
 
-program
-  .command("rm")
-  .description("Remove the project")
-  .action(() => {
-    remove();
-  });
-
 program.parse(process.argv);
