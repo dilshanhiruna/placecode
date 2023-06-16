@@ -30,8 +30,19 @@ function remove() {
   }
 }
 
+function addzpc() {
+  try {
+    execSync("node placecode addzpc", { stdio: "inherit" });
+    process.exit(0); // Successful execution
+  } catch (error) {
+    console.error(error);
+    process.exit(1); // Error occurred during execution
+  }
+}
+
 module.exports = {
   run,
   resetOnly,
   remove,
+  addzpc,
 };

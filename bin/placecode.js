@@ -3,7 +3,7 @@
 const { program } = require("commander");
 const initPlacecode = require("../src/init");
 const get = require("placecode/src/get");
-const { run, resetOnly, remove } = require("placecode/src/basic");
+const { run, resetOnly, addzpc } = require("placecode/src/basic");
 
 program
   .command("init")
@@ -31,6 +31,13 @@ program
   .description("Reset the project without running it")
   .action(() => {
     resetOnly();
+  });
+
+program
+  .command("addzpc")
+  .description("Add empty zpc files to every folder")
+  .action(() => {
+    addzpc();
   });
 
 program.parse(process.argv);
