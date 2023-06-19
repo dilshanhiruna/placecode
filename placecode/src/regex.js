@@ -6,6 +6,12 @@ const regex_start_to_end_options = (option) =>
 // start marker
 const regex_start_marker = /ZPC:START:\s*([^/\n\r]*)/;
 
+const regex_start_string_marker = "// ZPC:START:";
+
+const regex_end_string_marker = "// ZPC:END:";
+
+const regex_depend_string_marker = "// ZPC:DEPENDS:";
+
 // depends marker
 const regex_depends_marker = /ZPC:DEPENDS:\s*([^/\n\r]*)/;
 
@@ -51,4 +57,7 @@ module.exports = {
   regex_file_ignore,
   regex_zpc_lines,
   regex_zpc_lines_start,
+  regex_start_string_marker,
+  regex_end_string_marker,
+  regex_depend_string_marker,
 };

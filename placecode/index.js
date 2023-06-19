@@ -7,6 +7,7 @@ const blockComments = require("./src/blockcomments");
 const blockFiles = require("./src/blockfiles");
 const blockReset = require("./src/blockreset");
 const { addZpcFiles, deleteEmptyZpcFiles } = require("./src/zpcfiles");
+const formatCommentMarkers = require("./src/formatter");
 
 function convertJsonOptions(input) {
   const output = {};
@@ -29,6 +30,7 @@ function main() {
   const resetOnly = process.argv.includes("resetonly");
   const remove = process.argv.includes("remove");
   const addzpc = process.argv.includes("addzpc");
+  const fmt = process.argv.includes("fmt");
 
   if (resetOnly) {
     const deletedCount = deleteEmptyZpcFiles(sourceDir);
@@ -43,6 +45,8 @@ function main() {
   } else if (addzpc) {
     const createdCount = addZpcFiles(sourceDir);
     console.log(`Total zpc.txt files created: ${createdCount}`);
+  } else if (fmt) {
+    formatCommentMarkers(sourceDir);
   } else {
     const deletedCount = deleteEmptyZpcFiles(sourceDir);
     console.log(`Total empty zpc.txt files deleted: ${deletedCount}`);

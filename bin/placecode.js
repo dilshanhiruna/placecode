@@ -3,7 +3,7 @@
 const { program } = require("commander");
 const initPlacecode = require("../src/init");
 const get = require("placecode/src/get");
-const { run, resetOnly, addzpc } = require("placecode/src/basic");
+const { run, resetOnly, addzpc, fmt } = require("placecode/src/basic");
 
 program
   .command("init")
@@ -38,6 +38,13 @@ program
   .description("Add empty zpc files to every folder")
   .action(() => {
     addzpc();
+  });
+
+program
+  .command("fmt")
+  .description("Format the comment markers")
+  .action(() => {
+    fmt();
   });
 
 program.parse(process.argv);
