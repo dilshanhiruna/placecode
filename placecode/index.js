@@ -11,7 +11,7 @@ const formatCommentMarkers = require("./src/formatter");
 
 function convertJsonOptions(input) {
   const output = {};
-  for (const [category, categoryData] of Object.entries(input)) {
+  for (const [_category, categoryData] of Object.entries(input)) {
     const features = categoryData.features || {};
     for (const [option, optionData] of Object.entries(features)) {
       if (optionData.enabled !== false) {
