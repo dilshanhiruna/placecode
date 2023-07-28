@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { ignore } = require("../config.json");
 const {
   regex_start_string_marker,
   regex_depend_string_marker,
@@ -44,6 +45,10 @@ function formatCommentMarkersInFiles(sourceDir) {
     const files = fs.readdirSync(dirPath);
 
     for (const file of files) {
+      if (ignore.includes(file)) {
+        continue;
+      }
+
       const filePath = path.join(dirPath, file);
       const stats = fs.statSync(filePath);
 

@@ -1,5 +1,4 @@
 const { sourceDir } = require("./config.json");
-const options = require("./features.json");
 const checkCommentMarkers = require("./src/checker");
 const processPlacecodeFiles = require("./src/forfiles");
 const generateTemplate = require("./src/forcontent");
@@ -8,6 +7,23 @@ const blockFiles = require("./src/blockfiles");
 const blockReset = require("./src/blockreset");
 const { addZpcFiles, deleteEmptyZpcFiles } = require("./src/zpcfiles");
 const formatCommentMarkers = require("./src/formatter");
+const fs = require("fs");
+const path = require("path");
+
+// Function to read the content of placecode.json file
+function readPlacecodeJson() {
+  const placecodeJsonFile = path.join(__dirname, "..", "placecode.json");
+  if (fs.existsSync(placecodeJsonFile)) {
+    const content = fs.readFileSync(placecodeJsonFile, "utf8");
+    return JSON.parse(content);
+  } else {
+    console.error(
+      "\x1b[33m%s\x1b[0m",
+      "placecode.json file not found in the root directory."
+    );
+    process.exit(1); // Exit the process with an error code
+  }
+}
 
 function convertJsonOptions(input) {
   const output = {};
@@ -20,6 +36,8 @@ function convertJsonOptions(input) {
 }
 
 function main() {
+  const options = readPlacecodeJson();
+
   const selectedOptions = convertJsonOptions(options);
 
   const resetOnly = process.argv.includes("resetonly");

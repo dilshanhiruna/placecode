@@ -97,9 +97,9 @@ async function gen(arg) {
   cloneRepo(url, templateDir);
 
   // Check if features.json file exists
-  const optionsFilePath = path.join(templateDir, ".placecode/features.json");
+  const optionsFilePath = path.join(templateDir, "placecode.json");
   if (!fs.existsSync(optionsFilePath)) {
-    console.log("No features.json file found");
+    console.log("No placecode.json file found");
     return;
   }
 
