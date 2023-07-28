@@ -2,6 +2,15 @@ const path = require("path");
 const fs = require("fs-extra");
 const { spawnSync } = require("child_process");
 
+// Helper function to calculate the total number of features in the options.json file
+function calculateTotalFeatures(jsonData) {
+  let totalFeatures = 0;
+  for (const category of jsonData) {
+    totalFeatures += category.features.length;
+  }
+  return totalFeatures;
+}
+
 // Helper function to clone a Git repository
 function cloneRepo(repoUrl, destDir) {
   spawnSync("git", ["clone", repoUrl, destDir]);
@@ -105,7 +114,7 @@ async function gen(arg) {
   }
 
   // Validate the feature numbers
-  const maxFeatureNumber = Object.keys(options).length * 3;
+  const maxFeatureNumber = calculateTotalFeatures(options);
   const invalidFeatureNumbers = featureNumbers.filter(
     (num) => num < 1 || num > maxFeatureNumber
   );
@@ -120,17 +129,13 @@ async function gen(arg) {
   let featureIndex = 1; // Initialize the feature index
   const enabledFeatureLabels = []; // Array to store labels of enabled features
   // Update the enabled values in options.json
-  for (const categoryKey in options) {
-    const category = options[categoryKey];
-    for (const featureKey in category.features) {
-      const feature = category.features[featureKey];
+  for (const category of options) {
+    for (const feature of category.features) {
       const featureNumber = featureIndex;
       feature.enabled = featureNumbers.includes(featureNumber);
-
       if (feature.enabled) {
         enabledFeatureLabels.push(feature.label);
       }
-
       featureIndex++; // Increment the feature index
     }
   }
