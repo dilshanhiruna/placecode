@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs-extra");
 const { spawnSync } = require("child_process");
 
-// Helper function to calculate the total number of features in the options.json file
+// Helper function to calculate the total number of features in the features.json file
 function calculateTotalFeatures(jsonData) {
   let totalFeatures = 0;
   for (const category of jsonData) {
@@ -96,10 +96,10 @@ async function gen(arg) {
   // Clone the repository into the template directory
   cloneRepo(url, templateDir);
 
-  // Check if options.json file exists
-  const optionsFilePath = path.join(templateDir, "placecode/options.json");
+  // Check if features.json file exists
+  const optionsFilePath = path.join(templateDir, "placecode/features.json");
   if (!fs.existsSync(optionsFilePath)) {
-    console.log("No options.json file found");
+    console.log("No features.json file found");
     return;
   }
 
@@ -109,7 +109,7 @@ async function gen(arg) {
     const optionsData = fs.readFileSync(optionsFilePath, "utf-8");
     options = JSON.parse(optionsData);
   } catch (error) {
-    console.log("Error reading options.json:", error);
+    console.log("Error reading features.json:", error);
     return;
   }
 
@@ -128,7 +128,7 @@ async function gen(arg) {
 
   let featureIndex = 1; // Initialize the feature index
   const enabledFeatureLabels = []; // Array to store labels of enabled features
-  // Update the enabled values in options.json
+  // Update the enabled values in features.json
   for (const category of options) {
     for (const feature of category.features) {
       const featureNumber = featureIndex;
@@ -140,11 +140,11 @@ async function gen(arg) {
     }
   }
 
-  // Save the updated options.json file
+  // Save the updated features.json file
   try {
     fs.writeFileSync(optionsFilePath, JSON.stringify(options, null, 2));
   } catch (error) {
-    console.log("Error writing options.json:", error);
+    console.log("Error writing features.json:", error);
     return;
   }
 

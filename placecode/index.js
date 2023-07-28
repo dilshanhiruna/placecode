@@ -1,5 +1,5 @@
 const { sourceDir } = require("./config.json");
-const options = require("./options.json");
+const options = require("./features.json");
 const checkCommentMarkers = require("./src/checker");
 const processPlacecodeFiles = require("./src/forfiles");
 const generateTemplate = require("./src/forcontent");
@@ -8,21 +8,6 @@ const blockFiles = require("./src/blockfiles");
 const blockReset = require("./src/blockreset");
 const { addZpcFiles, deleteEmptyZpcFiles } = require("./src/zpcfiles");
 const formatCommentMarkers = require("./src/formatter");
-
-// function convertJsonOptions(input) {
-//   const output = {};
-//   for (const [_category, categoryData] of Object.entries(input)) {
-//     const features = categoryData.features || {};
-//     for (const [option, optionData] of Object.entries(features)) {
-//       if (optionData.enabled !== false) {
-//         output[option] = true;
-//       } else {
-//         output[option] = false;
-//       }
-//     }
-//   }
-//   return output;
-// }
 
 function convertJsonOptions(input) {
   const output = {};
