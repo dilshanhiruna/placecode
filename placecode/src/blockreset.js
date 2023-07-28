@@ -3,7 +3,7 @@ const path = require("path");
 const {
   regex_start_to_end_options,
   regex_file_ignore,
-  regex_zpc_lines,
+  regex_pc_lines,
 } = require("./regex");
 const { ignore } = require("../config.json");
 const placeSnippets = require("./forsnippets");
@@ -59,7 +59,7 @@ function uncommentCodeLines(codeBlock) {
   return codeBlock
     .split("\n")
     .map((line) => {
-      if (regex_zpc_lines.test(line)) {
+      if (regex_pc_lines.test(line)) {
         // skip lines starting with "// ZPC:" or "ZPC:"
         return line;
       }

@@ -6,7 +6,7 @@ const {
   regex_depends_marker,
   regex_depends_with_options,
   regex_file_ignore,
-  regex_zpc_lines_start,
+  regex_pc_lines_start,
 } = require("./regex");
 const { ignore } = require("../config.json");
 const placeSnippets = require("./forsnippets");
@@ -123,7 +123,7 @@ function commentCodeLines(codeBlock) {
   return codeBlock
     .split("\n")
     .map((line, i, arr) =>
-      regex_zpc_lines_start.test(line)
+      regex_pc_lines_start.test(line)
         ? line
         : i === arr.length - 1
         ? line

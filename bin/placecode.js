@@ -2,7 +2,7 @@
 
 const { program } = require("commander");
 const initPlacecode = require("../src/init");
-const get = require("placecode/src/get");
+const gen = require("placecode/src/gen");
 const { run, resetOnly, addzpc, fmt } = require("placecode/src/basic");
 
 program
@@ -13,10 +13,10 @@ program
   });
 
 program
-  .command("get <arg>")
-  .description("Get the project with the specified argument")
+  .command("gen <arg>")
+  .description("Generate the project with the specified argument")
   .action((arg) => {
-    get(arg);
+    gen(arg);
   });
 
 program

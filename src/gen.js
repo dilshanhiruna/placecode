@@ -42,7 +42,7 @@ function moveFiles(sourceDir, destDir) {
   });
 }
 
-async function get(arg) {
+async function gen(arg) {
   const templateDir = path.join(__dirname, "../templates");
   // clean the template directory
   fs.emptyDirSync(templateDir);
@@ -158,4 +158,4 @@ async function get(arg) {
   }
 }
 
-module.exports = get;
+module.exports = gen;

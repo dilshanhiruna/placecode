@@ -1,48 +1,54 @@
 // used in generateTemplate, processPlacecodeFiles
-// `// ZPC:START:.*${option}.*[\\s\\S]*?// ZPC:END:.*${option}\\s*`,
+// `// pc:begin:.*${option}.*[\\s\\S]*?// pc:end:.*${option}\\s*`,
+// `// pc:begin:.*${option}.*[\\s\\S]*?// pc:end:.*${option}.*(?:\r?\n|$)`;
 const regex_start_to_end_options = (option) =>
-  `// ZPC:START:.*${option}.*[\\s\\S]*?// ZPC:END:.*${option}.*(?:\r?\n|$)`;
+  `\\/\\/ pc:begin:.*?${option}\\b[\\s\\S]*?\\/\\/ pc:end:.*?${option}\\b(?:\\r?\\n|$)`;
 
 // start marker
-const regex_start_marker = /ZPC:START:\s*([^/\n\r]*)/;
+const regex_start_marker = /pc:begin:\s*([^/\n\r]*)/;
 
-const regex_start_string_marker = "// ZPC:START:";
+const regex_start_string_marker = "// pc:begin:";
 
-const regex_end_string_marker = "// ZPC:END:";
+const regex_end_string_marker = "// pc:end:";
 
-const regex_depend_string_marker = "// ZPC:DEPENDS:";
+const regex_depend_string_marker = "// pc:depend:";
 
 // depends marker
-const regex_depends_marker = /ZPC:DEPENDS:\s*([^/\n\r]*)/;
+const regex_depends_marker = /pc:depend:\s*([^/\n\r]*)/;
 
 // reuse marker
-const regex_reuse_marker = /\/\/ ZPC:REUSE: (.+)/g;
+const regex_reuse_marker = /\/\/ pc:reuse: (.+)/g;
 
 //depends with options
 const regex_depends_with_options = (dependsOnOptions) =>
-  `// ZPC:DEPENDS:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`;
+  `// pc:depend:\\s*${dependsOnOptions.join("\\s*,\\s*")}\\s*`;
 
 // all markers
-const regex_all_markers = /\/\/ ZPC:(START|END|DEPENDS)[^\r\n]*\r?\n/g;
+const regex_all_markers = /\/\/ pc:(begin|end|depend)[^\r\n]*\r?\n/g;
 
 // start only marker
-const regex_start_only_marker = /\/\/ ZPC:START:/g;
+const regex_start_only_marker = /\/\/ pc:begin:/g;
 
 // end only marker
-const regex_end_only_marker = /\/\/ ZPC:END/g;
+const regex_end_only_marker = /\/\/ pc:end/g;
 
 // how all markers start
 const regex_all_markers_start = "//";
 
 // file ignore regex
 const regex_file_ignore =
-  /\/\*\s*ZPC:\s*IGNOREFILE\s*|\s*ZPC:\s*IGNOREFILE\s*\*\//g;
+  /\/\*\s*pc:\s*ignorefile\s*|\s*pc:\s*ignorefile\s*\*\//g;
 
-// lines starting with "// ZPC:" or "ZPC:"
-const regex_zpc_lines = /^(\s*\/\/\s*ZPC:)|^(\s*ZPC:)/;
+// lines starting with "// pc:" or "pc:"
+const regex_pc_lines = /^(\s*\/\/\s*pc:)|^(\s*pc:)/;
 
-// lines starting with "// ZPC:"
-const regex_zpc_lines_start = /^(\s*\/\/|ZPC:)/;
+// lines starting with "// pc:"
+const regex_pc_lines_start = /^(\s*\/\/|pc:)/;
+
+// for formatting
+const fmt_start_regex = /\/\/\s*pc\s*:\s*begin:([^]+?)\n/g;
+const fmt_depends_regex = /\/\/\s*pc\s*:\s*depend:([^]+?)\n/g;
+const fmt_end_regex = /\/\/\s*pc\s*:\s*end:([^]+?)\n/g;
 
 module.exports = {
   regex_start_to_end_options,
@@ -55,9 +61,12 @@ module.exports = {
   regex_all_markers_start,
   regex_reuse_marker,
   regex_file_ignore,
-  regex_zpc_lines,
-  regex_zpc_lines_start,
+  regex_pc_lines,
+  regex_pc_lines_start,
   regex_start_string_marker,
   regex_end_string_marker,
   regex_depend_string_marker,
+  fmt_start_regex,
+  fmt_depends_regex,
+  fmt_end_regex,
 };

@@ -9,16 +9,26 @@ const blockReset = require("./src/blockreset");
 const { addZpcFiles, deleteEmptyZpcFiles } = require("./src/zpcfiles");
 const formatCommentMarkers = require("./src/formatter");
 
+// function convertJsonOptions(input) {
+//   const output = {};
+//   for (const [_category, categoryData] of Object.entries(input)) {
+//     const features = categoryData.features || {};
+//     for (const [option, optionData] of Object.entries(features)) {
+//       if (optionData.enabled !== false) {
+//         output[option] = true;
+//       } else {
+//         output[option] = false;
+//       }
+//     }
+//   }
+//   return output;
+// }
+
 function convertJsonOptions(input) {
   const output = {};
-  for (const [_category, categoryData] of Object.entries(input)) {
-    const features = categoryData.features || {};
-    for (const [option, optionData] of Object.entries(features)) {
-      if (optionData.enabled !== false) {
-        output[option] = true;
-      } else {
-        output[option] = false;
-      }
+  for (const category of input) {
+    for (const feature of category.features) {
+      output[feature.label] = feature.enabled;
     }
   }
   return output;

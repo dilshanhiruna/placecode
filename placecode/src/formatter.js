@@ -4,27 +4,29 @@ const {
   regex_start_string_marker,
   regex_depend_string_marker,
   regex_end_string_marker,
+  fmt_start_regex,
+  fmt_depends_regex,
+  fmt_end_regex,
 } = require("./regex");
 
 function formatCommentMarkersInFiles(sourceDir) {
-  const startRegex = /\/\/\s*ZPC\s*:\s*START:([^]+?)\n/g;
-  const dependsRegex = /\/\/\s*ZPC\s*:\s*DEPENDS:([^]+?)\n/g;
-  const endRegex = /\/\/\s*ZPC\s*:\s*END:([^]+?)\n/g;
-
   function formatCommentMarkers(code) {
     let formattedCode = code;
 
-    formattedCode = formattedCode.replace(startRegex, (match, options) => {
+    formattedCode = formattedCode.replace(fmt_start_regex, (match, options) => {
       const formattedOptions = options.trim().replace(/\s*,\s*/g, ", ");
       return `${regex_start_string_marker} ${formattedOptions}\n`;
     });
 
-    formattedCode = formattedCode.replace(dependsRegex, (match, options) => {
-      const formattedOptions = options.trim().replace(/\s*,\s*/g, ", ");
-      return `${regex_depend_string_marker} ${formattedOptions}\n`;
-    });
+    formattedCode = formattedCode.replace(
+      fmt_depends_regex,
+      (match, options) => {
+        const formattedOptions = options.trim().replace(/\s*,\s*/g, ", ");
+        return `${regex_depend_string_marker} ${formattedOptions}\n`;
+      }
+    );
 
-    formattedCode = formattedCode.replace(endRegex, (match, options) => {
+    formattedCode = formattedCode.replace(fmt_end_regex, (match, options) => {
       const formattedOptions = options.trim().replace(/\s*,\s*/g, ", ");
       return `${regex_end_string_marker} ${formattedOptions}\n`;
     });
