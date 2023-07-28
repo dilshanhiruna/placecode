@@ -2,7 +2,7 @@ const { execSync } = require("child_process");
 
 function resetOnly() {
   try {
-    execSync("node placecode resetonly", { stdio: "inherit" });
+    execSync("node .placecode resetonly", { stdio: "inherit" });
     process.exit(0); // Successful execution
   } catch (error) {
     console.error(error);
@@ -12,7 +12,7 @@ function resetOnly() {
 
 function run() {
   try {
-    execSync("node placecode", { stdio: "inherit" });
+    execSync("node .placecode", { stdio: "inherit" });
     process.exit(0); // Successful execution
   } catch (error) {
     console.error(error);
@@ -22,7 +22,7 @@ function run() {
 
 function remove() {
   try {
-    execSync("node placecode remove", { stdio: "inherit" });
+    execSync("node .placecode remove", { stdio: "inherit" });
     process.exit(0); // Successful execution
   } catch (error) {
     console.error(error);
@@ -32,7 +32,7 @@ function remove() {
 
 function addzpc() {
   try {
-    execSync("node placecode addzpc", { stdio: "inherit" });
+    execSync("node .placecode addzpc", { stdio: "inherit" });
     process.exit(0); // Successful execution
   } catch (error) {
     console.error(error);
@@ -42,7 +42,7 @@ function addzpc() {
 
 function fmt() {
   try {
-    execSync("node placecode fmt", { stdio: "inherit" });
+    execSync("node .placecode fmt", { stdio: "inherit" });
     process.exit(0); // Successful execution
   } catch (error) {
     console.error(error);

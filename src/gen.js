@@ -23,7 +23,7 @@ function moveFiles(sourceDir, destDir) {
   fs.removeSync(gitDir);
 
   // Remove the placecode folder
-  const zpcDir = path.join(sourceDir, "placecode");
+  const zpcDir = path.join(sourceDir, ".placecode");
   fs.removeSync(zpcDir);
 
   fs.readdirSync(sourceDir).forEach((file) => {
@@ -97,7 +97,7 @@ async function gen(arg) {
   cloneRepo(url, templateDir);
 
   // Check if features.json file exists
-  const optionsFilePath = path.join(templateDir, "placecode/features.json");
+  const optionsFilePath = path.join(templateDir, ".placecode/features.json");
   if (!fs.existsSync(optionsFilePath)) {
     console.log("No features.json file found");
     return;
@@ -149,7 +149,7 @@ async function gen(arg) {
   }
 
   // Run the placecode process
-  const child = spawnSync("node", ["placecode", "remove"], {
+  const child = spawnSync("node", [".placecode", "remove"], {
     cwd: path.join(__dirname, "..", "templates"),
     stdio: "inherit",
   });

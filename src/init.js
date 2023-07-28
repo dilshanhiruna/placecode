@@ -6,7 +6,7 @@ const os = require("os");
 const fs = require("fs-extra");
 const { spawnSync } = require("child_process");
 
-const folderName = "placecode";
+const folderName = ".placecode";
 
 const packageDir = path.join(__dirname, "..");
 const sourceDir = path.join(packageDir, folderName);
