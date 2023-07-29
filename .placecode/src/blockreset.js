@@ -69,8 +69,8 @@ function uncommentCodeLines(codeBlock) {
 }
 
 function restoreMovedFiles() {
-  const tempDirectory = path.join("placecode/temp");
-  const movedFilesDataPath = path.join("placecode/temp/temp_data.json");
+  const tempDirectory = path.join(".placecode/temp");
+  const movedFilesDataPath = path.join(".placecode/temp/temp_data.json");
 
   try {
     if (fs.existsSync(movedFilesDataPath)) {

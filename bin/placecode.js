@@ -2,8 +2,8 @@
 
 const { program } = require("commander");
 const initPlacecode = require("../src/init");
-const gen = require("placecode/src/gen");
-const { run, resetOnly, addzpc, fmt } = require("placecode/src/basic");
+const gen = require("../src/gen");
+const { run, resetOnly, addzpc, fmt } = require("../src/basic");
 
 program
   .command("init")

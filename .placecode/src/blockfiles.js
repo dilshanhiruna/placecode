@@ -113,7 +113,7 @@ function blockFiles(directory, selectedOptions) {
   }
 }
 function moveFilesnFolders(targetsArray, directory) {
-  const tempDirectory = path.join("placecode/temp");
+  const tempDirectory = path.join(".placecode/temp");
   const movedFilesData = [];
 
   try {
@@ -159,7 +159,7 @@ function generateUniqueFilename(filename) {
 }
 
 function saveMovedFilesData(movedFilesData) {
-  const filePath = path.join("placecode/temp/temp_data.json");
+  const filePath = path.join(".placecode/temp/temp_data.json");
 
   try {
     let existingData = [];

@@ -1,6 +1,6 @@
 {
   "sourceDir": "./",
-  "snippetsDir": "placecode/snippets",
+  "snippetsDir": ".placecode/snippets",
   "ignore": [
     ".placecode",
     "zpc.txt",
