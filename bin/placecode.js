@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
 const { program } = require("commander");
+const packageJson = require("../package.json");
 const initPlacecode = require("../src/init");
-const gen = require("../src/gen");
-const { run, resetOnly, addzpc, fmt } = require("../src/basic");
+const gen = require("placecode/src/gen");
+const { run, resetOnly, addzpc, fmt } = require("placecode/src/basic");
 
 program
+  .version(packageJson.version)
   .command("init")
   .description("Initialize the project")
   .action(() => {
