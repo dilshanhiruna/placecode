@@ -48,7 +48,7 @@ npm install -g placecode
 
 > **Warning**: Make sure to install Placecode globally to ensure proper functionality.
 
-For more details on installation and troubleshooting, refer to the [Installation Guide](https://placecode.vercel.app/docs/command-reference/placecode-init).
+For more details on installation and troubleshooting, refer to the [Installation Guide](https://www.placecode.io/docs/command-reference/placecode-init).
 
 ## Command Reference
 
@@ -59,15 +59,15 @@ For more details on installation and troubleshooting, refer to the [Installation
 - **placecode addzpc**: Add empty zpc.txt files to every directory for specifying files and folders associated with specific features.
 - **placecode gen <template-code-from-placecode.io>**: Generate templates from existing dynamic templates from placecode.io.
 
-For more details on each command and their usage, refer to the [Command Reference Guide](https://placecode.vercel.app/docs/getting-started/installation).
+For more details on each command and their usage, refer to the [Command Reference Guide](https://www.placecode.io/docs/getting-started/installation).
 
 ## Documentation
 
-For comprehensive documentation on using Placecode, creating dynamic templates, configuration options, and more, please visit the [official documentation](https://placecode.vercel.app/docs).
+For comprehensive documentation on using Placecode, creating dynamic templates, configuration options, and more, please visit the [official documentation](https://www.placecode.io/docs).
 
 ## Contribution
 
-We welcome and appreciate contributions from the community. Whether it's bug fixes, new features, or improvements to existing code, feel free to submit a pull request. Please refer to our [Contribution Guidelines](https://placecode.vercel.app/docs/contribution-guidelines) for more information.
+We welcome and appreciate contributions from the community. Whether it's bug fixes, new features, or improvements to existing code, feel free to submit a pull request. Please refer to our [Contribution Guidelines](https://www.placecode.io/docs/contribution-guidelines) for more information.
 
 ## License
 
