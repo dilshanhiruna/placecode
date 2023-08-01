@@ -1,14 +1,31 @@
 {
   "name": "placecode",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "dynamic template generator",
   "bin": {
     "placecode": "./bin/placecode.js"
   },
   "author": "dilshanhiruna",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dilshanhiruna/placecode.git"
+  },
   "license": "MIT",
   "dependencies": {
     "commander": "^10.0.0",
     "fs-extra": "^11.1.1"
-  }
+  },
+  "keywords": [
+    "placecode",
+    "template",
+    "generator",
+    "dynamic template",
+    "template generator",
+    "template engine",
+    "dynamic template engine",
+    "boilerplate",
+    "boilerplate generator",
+    "boilerplate engine",
+    "dynamic boilerplate"
+  ]
 }
