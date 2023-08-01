@@ -6,11 +6,10 @@ const {
   regex_depends_marker,
   regex_all_markers_start,
 } = require("./regex");
-const { ignore } = require("../config.json");
 
 const zpc = "zpc.txt";
 
-function processPlacecodeFiles(directory, selectedOptions) {
+function blockFiles(directory, selectedOptions, ignore) {
   try {
     // Get a list of files and folders in the current directory
     const files = fs.readdirSync(directory);
@@ -62,10 +61,10 @@ function processPlacecodeFiles(directory, selectedOptions) {
               });
 
               if (allOptionsFalse) {
-                removeFiles(uniqueFiles, directory);
+                moveFilesnFolders(uniqueFiles, directory);
               }
             } else {
-              removeFiles(uniqueFiles, directory);
+              moveFilesnFolders(uniqueFiles, directory);
             }
           } else {
             // if the option is selected
@@ -93,46 +92,89 @@ function processPlacecodeFiles(directory, selectedOptions) {
 
               if (!areAllDependenciesSelected) {
                 // remove the files and folders
-                removeFiles(uniqueFiles, directory);
+                moveFilesnFolders(uniqueFiles, directory);
               }
             }
           }
         }
       }
-
-      // Remove the zpc.txt file
-      fs.unlink(placecodePath);
     }
     // Recursively process any subdirectories
     for (const file of files) {
       const filePath = path.join(directory, file);
 
       if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-        processPlacecodeFiles(filePath, selectedOptions);
+        blockFiles(filePath, selectedOptions, ignore);
       }
     }
   } catch (error) {
     console.error(`Error processing placecode files: ${error}`);
   }
 }
+function moveFilesnFolders(targetsArray, directory) {
+  const tempDirectory = path.join(".placecode/temp");
+  const movedFilesData = [];
 
-function removeFiles(targetsArray, directory) {
-  // Remove the specified files and folders
-  for (const target of targetsArray) {
-    const targetPath = path.join(directory, target);
-    try {
-      if (fs.existsSync(targetPath)) {
-        const stats = fs.statSync(targetPath);
-        if (stats.isDirectory()) {
-          fs.rm(targetPath, { recursive: true });
-        } else {
-          fs.unlink(targetPath);
-        }
+  try {
+    for (const target of targetsArray) {
+      const sourcePath = path.join(directory, target);
+
+      if (!fs.existsSync(sourcePath)) {
+        continue;
       }
-    } catch (error) {
-      console.error(`Error removing ${targetPath}: ${error}`);
+
+      // Generate a unique filename for the destination
+      const uniqueFilename = generateUniqueFilename(target);
+      const destinationPath = path.join(tempDirectory, uniqueFilename);
+
+      // Create the destination directory if it doesn't exist
+      const destinationDir = path.dirname(destinationPath);
+      fs.mkdirSync(destinationDir, { recursive: true });
+
+      // Move the file or folder to the temporary directory
+      fs.renameSync(sourcePath, destinationPath);
+
+      // Record the moved file and its original location
+      const movedFileData = {
+        file: target,
+        originalPath: path.join(sourcePath),
+        uniqueFilename: uniqueFilename,
+      };
+      movedFilesData.push(movedFileData);
     }
+  } catch (error) {
+    console.error(`Error moving files and folders to temp directory: ${error}`);
+  }
+
+  // Save the moved files data for future restoration
+  saveMovedFilesData(movedFilesData);
+}
+
+function generateUniqueFilename(filename) {
+  const timestamp = Date.now();
+  const randomString = Math.random().toString(36).substring(2, 16);
+  const uniqueFilename = `${timestamp}${randomString}_${filename}`;
+  return uniqueFilename;
+}
+
+function saveMovedFilesData(movedFilesData) {
+  const filePath = path.join(".placecode/temp/temp_data.json");
+
+  try {
+    let existingData = [];
+
+    if (fs.existsSync(filePath)) {
+      const existingDataString = fs.readFileSync(filePath, "utf8");
+      existingData = JSON.parse(existingDataString);
+    }
+
+    const mergedData = existingData.concat(movedFilesData);
+    const mergedDataString = JSON.stringify(mergedData);
+
+    fs.writeFileSync(filePath, mergedDataString);
+  } catch (error) {
+    console.error(`Error saving moved files data: ${error}`);
   }
 }
 
-module.exports = processPlacecodeFiles;
+module.exports = blockFiles;

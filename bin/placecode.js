@@ -2,16 +2,16 @@
 
 const { program } = require("commander");
 const packageJson = require("../package.json");
-const initPlacecode = require("../src/init");
-const gen = require("placecode/src/gen");
-const { run, resetOnly, addzpc, fmt } = require("placecode/src/basic");
+const init = require("../src/init");
+const gen = require("../src/gen");
+const { run, resetOnly, addzpc, fmt } = require("../src/basic");
 
 program
   .version(packageJson.version)
   .command("init")
   .description("Initialize the project")
   .action(() => {
-    initPlacecode();
+    init();
   });
 
 program
@@ -25,28 +25,28 @@ program
   .command("run")
   .description("Run the project")
   .action(() => {
-    run();
+    run("run");
   });
 
 program
   .command("re")
   .description("Reset the project without running it")
   .action(() => {
-    resetOnly();
+    resetOnly("re");
   });
 
 program
   .command("addzpc")
   .description("Add empty zpc files to every folder")
   .action(() => {
-    addzpc();
+    addzpc("addzpc");
   });
 
 program
   .command("fmt")
   .description("Format the comment markers")
   .action(() => {
-    fmt();
+    fmt("fmt");
   });
 
 program.parse(process.argv);

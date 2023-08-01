@@ -7,10 +7,8 @@ const {
   regex_depends_with_options,
   regex_all_markers,
 } = require("./regex");
-const { ignore } = require("../config.json");
-const placeSnippets = require("./forsnippets");
 
-async function generateTemplate(dir, selectedOptions) {
+function generateTemplate(dir, selectedOptions, ignore) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
     // check if the directory is in the ignore list
@@ -21,13 +19,10 @@ async function generateTemplate(dir, selectedOptions) {
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
-      generateTemplate(filePath, selectedOptions);
+      generateTemplate(filePath, selectedOptions, ignore);
     } else {
       // Read the file contents
       let content = fs.readFileSync(filePath, "utf8");
-
-      // Place the snippets
-      content = placeSnippets(content);
 
       // Loop through each option and remove the unselected blocks
       for (const [option, isSelected] of Array.from(

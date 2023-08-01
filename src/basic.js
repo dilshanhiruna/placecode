@@ -1,8 +1,8 @@
-const { execSync } = require("child_process");
+const core = require("./placecode");
 
-function resetOnly() {
+function resetOnly(cmd) {
   try {
-    execSync("node .placecode resetonly", { stdio: "inherit" });
+    core(cmd);
     process.exit(0); // Successful execution
   } catch (error) {
     console.error(error);
@@ -10,9 +10,9 @@ function resetOnly() {
   }
 }
 
-function run() {
+function run(cmd) {
   try {
-    execSync("node .placecode", { stdio: "inherit" });
+    core(cmd);
     process.exit(0); // Successful execution
   } catch (error) {
     console.error(error);
@@ -20,9 +20,9 @@ function run() {
   }
 }
 
-function remove() {
+function addzpc(cmd) {
   try {
-    execSync("node .placecode remove", { stdio: "inherit" });
+    core(cmd);
     process.exit(0); // Successful execution
   } catch (error) {
     console.error(error);
@@ -30,19 +30,9 @@ function remove() {
   }
 }
 
-function addzpc() {
+function fmt(cmd) {
   try {
-    execSync("node .placecode addzpc", { stdio: "inherit" });
-    process.exit(0); // Successful execution
-  } catch (error) {
-    console.error(error);
-    process.exit(1); // Error occurred during execution
-  }
-}
-
-function fmt() {
-  try {
-    execSync("node .placecode fmt", { stdio: "inherit" });
+    core(cmd);
     process.exit(0); // Successful execution
   } catch (error) {
     console.error(error);
@@ -53,7 +43,6 @@ function fmt() {
 module.exports = {
   run,
   resetOnly,
-  remove,
   addzpc,
   fmt,
 };

@@ -8,10 +8,8 @@ const {
   regex_file_ignore,
   regex_pc_lines_start,
 } = require("./regex");
-const { ignore } = require("../config.json");
-const placeSnippets = require("./forsnippets");
 
-async function blockComments(dir, selectedOptions) {
+function blockComments(dir, selectedOptions, ignore) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
     // check if the directory is in the ignore list
@@ -22,7 +20,7 @@ async function blockComments(dir, selectedOptions) {
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
-      blockComments(filePath, selectedOptions);
+      blockComments(filePath, selectedOptions, ignore);
     } else {
       // Read the file contents
       let content = fs.readFileSync(filePath, "utf8");
@@ -31,9 +29,6 @@ async function blockComments(dir, selectedOptions) {
       if (regex_file_ignore.test(content)) {
         continue;
       }
-
-      // Place the snippets
-      content = placeSnippets(content);
 
       // Loop through each option and remove the unselected blocks
       for (const [option, isSelected] of Array.from(

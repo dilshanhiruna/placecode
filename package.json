@@ -1,13 +1,12 @@
 {
   "name": "placecode",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "dynamic template generator",
-  "main": "placecode/index.js",
   "bin": {
     "placecode": "./bin/placecode.js"
   },
   "author": "dilshanhiruna",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "commander": "^10.0.0",
     "fs-extra": "^11.1.1"

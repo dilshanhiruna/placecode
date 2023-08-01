@@ -5,10 +5,8 @@ const {
   regex_file_ignore,
   regex_pc_lines,
 } = require("./regex");
-const { ignore } = require("../config.json");
-const placeSnippets = require("./forsnippets");
 
-async function blockReset(dir, selectedOptions) {
+function blockReset(dir, selectedOptions, ignore) {
   // restore moved files
   restoreMovedFiles();
 
@@ -22,13 +20,10 @@ async function blockReset(dir, selectedOptions) {
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
-      blockReset(filePath, selectedOptions);
+      blockReset(filePath, selectedOptions, ignore);
     } else {
       // Read the file contents
       let content = fs.readFileSync(filePath, "utf8");
-
-      // Place the snippets
-      content = placeSnippets(content);
 
       // remove ignorefile comments if any
       content = content.replace(regex_file_ignore, "");

@@ -1,9 +1,16 @@
 const fs = require("fs-extra");
 const path = require("path");
-const { regex_reuse_marker } = require("./regex");
-const { snippetsDir } = require("../config.json");
+const { regex_reuse_marker } = require("placecode/placecode/src/regex");
 
 function placeSnippets(content) {
+  const configJsonFile = path.join(process.cwd(), ".", "pc.config.json");
+  const { snippetsDir } = JSON.parse(fs.readFileSync(configJsonFile, "utf8"));
+
+  // check if snippetsDir exists
+  if (!fs.existsSync(snippetsDir)) {
+    return;
+  }
+
   const matches = [...content.matchAll(regex_reuse_marker)];
 
   for (const match of matches) {

@@ -1,9 +1,8 @@
 const fs = require("fs-extra");
 const path = require("path");
 const { regex_start_only_marker, regex_end_only_marker } = require("./regex");
-const { ignore } = require("../config.json");
 
-function checkCommentMarkers(dir) {
+function checkCommentMarkers(dir, ignore) {
   const files = fs.readdirSync(dir);
   let errorFound = false;
   for (const file of files) {
@@ -15,7 +14,7 @@ function checkCommentMarkers(dir) {
     const stat = fs.statSync(filePath);
     // check if the file is a directory
     if (stat.isDirectory()) {
-      errorFound = checkCommentMarkers(filePath) || errorFound;
+      errorFound = checkCommentMarkers(filePath, ignore) || errorFound;
     } else {
       // Read the file contents
       let content = fs.readFileSync(filePath, "utf8");

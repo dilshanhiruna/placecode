@@ -1,8 +1,7 @@
 const fs = require("fs-extra");
 const path = require("path");
-const { ignore } = require("../config.json");
 
-function addZpcFiles(directory) {
+function addZpcFiles(directory, ignore) {
   let createdCount = 0;
   try {
     const files = fs.readdirSync(directory);
@@ -22,7 +21,7 @@ function addZpcFiles(directory) {
 
       if (fs.statSync(filePath).isDirectory() && !ignore.includes(filePath)) {
         // Recursively add zpc.txt files to subdirectories
-        const subdirectoryCreatedCount = addZpcFiles(filePath);
+        const subdirectoryCreatedCount = addZpcFiles(filePath, ignore);
         createdCount += subdirectoryCreatedCount;
       }
     }
@@ -32,7 +31,7 @@ function addZpcFiles(directory) {
   return createdCount;
 }
 
-function deleteEmptyZpcFiles(directory) {
+function deleteEmptyZpcFiles(directory, ignore) {
   let deletedCount = 0;
   try {
     const files = fs.readdirSync(directory);
@@ -43,7 +42,10 @@ function deleteEmptyZpcFiles(directory) {
 
         if (fs.statSync(filePath).isDirectory() && !ignore.includes(filePath)) {
           // Recursively check and delete empty zpc.txt files in subdirectories
-          const subdirectoryDeletedCount = deleteEmptyZpcFiles(filePath);
+          const subdirectoryDeletedCount = deleteEmptyZpcFiles(
+            filePath,
+            ignore
+          );
           deletedCount += subdirectoryDeletedCount;
         } else if (file === "zpc.txt") {
           const fileContent = fs.readFileSync(filePath, "utf8");

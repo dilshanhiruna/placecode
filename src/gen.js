@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs-extra");
 const { spawnSync } = require("child_process");
+const core = require("../src/placecode/index.js");
 
 // Helper function to calculate the total number of features in the placecode.json file
 function calculateTotalFeatures(jsonData) {
@@ -22,8 +23,12 @@ function moveFiles(sourceDir, destDir) {
   const gitDir = path.join(sourceDir, ".git");
   fs.removeSync(gitDir);
 
-  // Remove the placecode folder
-  const zpcDir = path.join(sourceDir, ".placecode");
+  // Remove placecode.json file
+  const optionsFilePath = path.join(sourceDir, "placecode.json");
+  fs.removeSync(optionsFilePath);
+
+  // Remove the pc.config.json file
+  const zpcDir = path.join(sourceDir, "pc.config.json");
   fs.removeSync(zpcDir);
 
   fs.readdirSync(sourceDir).forEach((file) => {
@@ -51,7 +56,7 @@ function moveFiles(sourceDir, destDir) {
   });
 }
 
-async function gen(arg) {
+function gen(arg) {
   const templateDir = path.join(__dirname, "../templates");
   // clean the template directory
   fs.emptyDirSync(templateDir);
@@ -149,17 +154,15 @@ async function gen(arg) {
   }
 
   // Run the placecode process
-  const child = spawnSync("node", [".placecode", "remove"], {
-    cwd: path.join(__dirname, "..", "templates"),
-    stdio: "inherit",
-  });
+  try {
+    core("remove", templateDir);
 
-  if (child.status === 0) {
     moveFiles(templateDir, process.cwd());
     console.log("Features: ", enabledFeatureLabels.join(", "));
     console.log("\x1b[32m%s\x1b[0m", "Template generation complete!");
-  } else {
+  } catch (error) {
     console.log("Template generation failed.");
+    process.exit(1); // Error occurred during execution
   }
 }
 

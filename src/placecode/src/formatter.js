@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const { ignore } = require("../config.json");
 const {
   regex_start_string_marker,
   regex_depend_string_marker,
@@ -10,7 +9,7 @@ const {
   fmt_end_regex,
 } = require("./regex");
 
-function formatCommentMarkersInFiles(sourceDir) {
+function formatCommentMarkersInFiles(sourceDir, ignore) {
   function formatCommentMarkers(code) {
     let formattedCode = code;
 

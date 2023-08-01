@@ -1,22 +1,20 @@
 #!/usr/bin/env node
 
 const path = require("path");
-const { exec } = require("child_process");
-const os = require("os");
-const { spawnSync } = require("child_process");
 const fs = require("fs-extra");
 
-const folderName = ".placecode";
-const pcFileName = "placecode.json";
+const configFileName = "src/init/pc.config.json";
+const pcFileName = "src/init/placecode.json";
 
 const packageDir = path.join(__dirname, "..");
-const sourceDir = path.join(packageDir, folderName);
-const destDir = path.join(process.cwd(), `${folderName}`);
+
+const configFile = path.join(packageDir, configFileName);
+const destconfigFile = path.join(process.cwd(), "pc.config.json");
 
 const pcFile = path.join(packageDir, pcFileName);
-const destpcFile = path.join(process.cwd(), `${pcFileName}`);
+const destpcFile = path.join(process.cwd(), "placecode.json");
 
-function copyDirectoryOrFile(source, destination) {
+function copyFile(source, destination) {
   return new Promise((resolve, reject) => {
     fs.stat(source, (err, stats) => {
       if (err) {
@@ -24,21 +22,7 @@ function copyDirectoryOrFile(source, destination) {
         return;
       }
 
-      if (stats.isDirectory()) {
-        let command;
-        if (os.platform() === "win32") {
-          command = `xcopy "${source}" "${destination}" /E /I /Y`;
-        } else {
-          command = `cp -r "${source}" "${destination}"`;
-        }
-        exec(command, (error, stdout, stderr) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve();
-          }
-        });
-      } else if (stats.isFile()) {
+      if (stats.isFile()) {
         fs.copy(source, destination, (err) => {
           if (err) {
             reject(err);
@@ -46,43 +30,21 @@ function copyDirectoryOrFile(source, destination) {
             resolve();
           }
         });
-      } else {
-        reject(new Error("Source is neither a directory nor a file."));
       }
     });
   });
 }
 
-function setHiddenAttribute(path) {
-  const command = `attrib +h "${path}"`;
-
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      console.error("Error setting hidden attribute:", error);
-    }
-  });
-}
-
-async function initPlacecode() {
+async function init() {
   try {
-    await copyDirectoryOrFile(sourceDir, destDir);
+    await copyFile(configFile, destconfigFile);
 
-    await copyDirectoryOrFile(pcFile, destpcFile);
+    await copyFile(pcFile, destpcFile);
 
-    const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
-
-    const child = spawnSync(npmCmd, ["i", "fs-extra"], {
-      cwd: process.cwd(),
-      stdio: "inherit",
-    });
-
-    if (child.error) {
-      console.error(child.error);
-      process.exit(1);
-    }
+    console.log("\x1b[32m%s\x1b[0m", "Placecode Project Initialized");
   } catch (error) {
-    console.error("Error copying folder:", error);
+    console.error("Error in Placecode Project Initialization:", error);
   }
 }
 
-module.exports = initPlacecode;
+module.exports = init;
