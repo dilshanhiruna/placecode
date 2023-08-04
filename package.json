@@ -5,12 +5,14 @@
   "bin": {
     "placecode": "./bin/placecode.js"
   },
-  "author": "dilshanhiruna",
+  "author": "Dilshan Hiruna <dilshan.hirunaa@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/dilshanhiruna/placecode.git"
   },
+  "homepage": "https://placecode.io",
   "license": "MIT",
+   "bugs": "https://github.com/dilshanhiruna/placecode/issues",
   "dependencies": {
     "commander": "^10.0.0",
     "fs-extra": "^11.1.1"

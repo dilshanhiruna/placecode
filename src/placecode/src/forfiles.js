@@ -11,13 +11,12 @@ const zpc = "zpc.txt";
 
 function processPlacecodeFiles(directory, selectedOptions, ignore) {
   try {
-    // Get a list of files and folders in the current directory
-    const files = fs.readdirSync(directory);
-
     // check if the directory is in the ignore list
-    if (ignore.includes(files)) {
+    if (ignore.includes(directory.replace(process.cwd() + path.sep, ""))) {
       return;
     }
+    // Get a list of files and folders in the current directory
+    const files = fs.readdirSync(directory);
     // Check for the existence of a zpc.txt file
     if (files.includes(zpc)) {
       const placecodePath = path.join(directory, zpc);

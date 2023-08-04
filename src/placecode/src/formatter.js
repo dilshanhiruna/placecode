@@ -44,7 +44,7 @@ function formatCommentMarkersInFiles(sourceDir, ignore) {
     const files = fs.readdirSync(dirPath);
 
     for (const file of files) {
-      if (ignore.includes(file)) {
+      if (ignore.includes(file.replace(process.cwd() + path.sep, ""))) {
         continue;
       }
 

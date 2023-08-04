@@ -13,7 +13,7 @@ function blockComments(dir, selectedOptions, ignore) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
     // check if the directory is in the ignore list
-    if (ignore.includes(file)) {
+    if (ignore.includes(file.replace(process.cwd() + path.sep, ""))) {
       continue;
     }
     const filePath = path.join(dir, file);

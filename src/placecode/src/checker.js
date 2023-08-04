@@ -7,7 +7,7 @@ function checkCommentMarkers(dir, ignore) {
   let errorFound = false;
   for (const file of files) {
     // check if the directory is in the ignore list
-    if (ignore.includes(file)) {
+    if (ignore.includes(file.replace(process.cwd() + path.sep, ""))) {
       continue;
     }
     const filePath = path.join(dir, file);
