@@ -88,6 +88,9 @@ function restoreMovedFiles() {
 
       // Remove the temp_data.json file
       fs.unlinkSync(movedFilesDataPath);
+
+      // remove all empty directories
+      fs.rmdirSync(tempDirectory, { recursive: true });
     }
   } catch (error) {
     console.error(`Error restoring moved files: ${error}`);
