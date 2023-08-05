@@ -1,7 +1,9 @@
 const path = require("path");
 const fs = require("fs-extra");
 const { spawnSync } = require("child_process");
-const core = require("../src/placecode/index.js");
+const { core } = require("../src/placecode/index.js");
+const { readConfigJson } = require("../src/placecode/index.js");
+const usePrettier = require("../src/placecode/src/prettier.js");
 
 // Helper function to calculate the total number of features in the placecode.json file
 function calculateTotalFeatures(jsonData) {
@@ -56,7 +58,7 @@ function moveFiles(sourceDir, destDir) {
   });
 }
 
-function gen(arg) {
+async function gen(arg) {
   const templateDir = path.join(__dirname, "../templates");
   // clean the template directory
   fs.emptyDirSync(templateDir);
@@ -158,6 +160,11 @@ function gen(arg) {
     core("remove", templateDir);
 
     moveFiles(templateDir, process.cwd());
+
+    // run prettier
+    const { ignore } = readConfigJson(process.cwd());
+    await usePrettier(process.cwd(), ignore);
+
     console.log("Features: ", enabledFeatureLabels.join(", "));
     console.log("\x1b[32m%s\x1b[0m", "Template generation complete!");
   } catch (error) {

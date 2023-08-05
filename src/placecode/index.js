@@ -78,11 +78,13 @@ function core(cmd, dir) {
   }
 
   if (cmd === "run") {
-    const deletedCount = deleteEmptyZpcFiles(sourceDir, ignore);
+    if (!checkCommentMarkers(sourceDir, ignore)) {
+      const deletedCount = deleteEmptyZpcFiles(sourceDir, ignore);
 
-    blockReset(sourceDir, selectedOptions, ignore);
-    blockFiles(sourceDir, selectedOptions, ignore);
-    blockComments(sourceDir, selectedOptions, ignore);
+      blockReset(sourceDir, selectedOptions, ignore);
+      blockFiles(sourceDir, selectedOptions, ignore);
+      blockComments(sourceDir, selectedOptions, ignore);
+    }
   }
 
   if (cmd === "remove") {
@@ -93,4 +95,7 @@ function core(cmd, dir) {
   }
 }
 
-module.exports = core;
+module.exports = {
+  core,
+  readConfigJson,
+};

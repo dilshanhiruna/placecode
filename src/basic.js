@@ -1,4 +1,4 @@
-const core = require("./placecode");
+const { core } = require("./placecode");
 
 function resetOnly(cmd) {
   try {
