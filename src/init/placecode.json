@@ -7,17 +7,15 @@
       {
         "label": "option1",
         "description": "Description of option 1",
-        "depend_features": [""],
-        "depend_categories": ["category2"],
-        "default": false,
+        "depend_features": [],
+        "depend_categories": [],
         "enabled": false
       },
       {
         "label": "option2",
         "description": "Description of option 2",
-        "depend_features": [""],
+        "depend_features": [],
         "depend_categories": [],
-        "default": false,
         "enabled": true
       },
       {
@@ -25,7 +23,6 @@
         "description": "Description of option 3",
         "depend_features": [],
         "depend_categories": [],
-        "default": false,
         "enabled": true
       }
     ]
@@ -40,7 +37,6 @@
         "description": "Description of option 4",
         "depend_features": [],
         "depend_categories": [],
-        "default": false,
         "enabled": true
       },
       {
@@ -48,7 +44,6 @@
         "description": "Description of option 5",
         "depend_features": [],
         "depend_categories": [],
-        "default": false,
         "enabled": true
       },
       {
@@ -56,7 +51,6 @@
         "description": "Description of option 6",
         "depend_features": [],
         "depend_categories": [],
-        "default": false,
         "enabled": true
       }
     ]
@@ -69,9 +63,8 @@
       {
         "label": "option7",
         "description": "Description of option 7",
-        "depend_features": [""],
+        "depend_features": [],
         "depend_categories": [],
-        "default": false,
         "enabled": true
       },
       {
@@ -79,7 +72,6 @@
         "description": "Description of option 8",
         "depend_features": [],
         "depend_categories": [],
-        "default": false,
         "enabled": true
       },
       {
@@ -87,7 +79,6 @@
         "description": "Description of option 9",
         "depend_features": [],
         "depend_categories": [],
-        "default": false,
         "enabled": true
       }
     ]

@@ -4,6 +4,7 @@ const generateTemplate = require("./src/forcontent");
 const blockComments = require("./src/blockcomments");
 const blockFiles = require("./src/blockfiles");
 const blockReset = require("./src/blockreset");
+const runValidations = require("./src/validations");
 const { addZpcFiles, deleteEmptyZpcFiles } = require("./src/zpcfiles");
 const formatCommentMarkers = require("./src/formatter");
 const defaultIgnore = require("./src/ignoreList");
@@ -79,12 +80,45 @@ function core(cmd, dir) {
 
   if (cmd === "run") {
     if (!checkCommentMarkers(sourceDir, ignore)) {
+      // show running features
+      console.log("Running features:");
+      let counter = 1;
+      for (const [key, value] of Object.entries(selectedOptions)) {
+        if (value) {
+          console.log(`  ${counter}. ${key}`);
+          counter++;
+        }
+      }
+
       const deletedCount = deleteEmptyZpcFiles(sourceDir, ignore);
+
+      const results = runValidations(sourceDir);
+
+      if (!results.isValid) {
+        console.error(
+          "\x1b[33m%s\x1b[0m",
+          `\nplacecode.json validation failed:`
+        );
+        console.log(results.errorMessage);
+        process.exit(1); // Exit the process with an error code
+      }
 
       blockReset(sourceDir, selectedOptions, ignore);
       blockFiles(sourceDir, selectedOptions, ignore);
       blockComments(sourceDir, selectedOptions, ignore);
     }
+  }
+
+  if (cmd === "validate") {
+    const results = runValidations(sourceDir);
+
+    if (!results.isValid) {
+      console.error("\x1b[33m%s\x1b[0m", `placecode.json validation failed:`);
+      console.log(results.errorMessage);
+      process.exit(1); // Exit the process with an error code
+    }
+
+    console.log("\x1b[32m%s\x1b[0m", "placecode.json validation passed.");
   }
 
   if (cmd === "remove") {
