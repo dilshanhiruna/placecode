@@ -9,7 +9,7 @@ const {
 
 const zpc = "zpc.txt";
 
-function processPlacecodeFiles(directory, selectedOptions, ignore) {
+async function processPlacecodeFiles(directory, selectedOptions, ignore) {
   try {
     // check if the directory is in the ignore list
     if (ignore.includes(directory.replace(process.cwd() + path.sep, ""))) {
@@ -60,10 +60,10 @@ function processPlacecodeFiles(directory, selectedOptions, ignore) {
               });
 
               if (allOptionsFalse) {
-                removeFiles(uniqueFiles, directory);
+                await removeFiles(uniqueFiles, directory);
               }
             } else {
-              removeFiles(uniqueFiles, directory);
+              await removeFiles(uniqueFiles, directory);
             }
           } else {
             // if the option is selected
@@ -91,7 +91,7 @@ function processPlacecodeFiles(directory, selectedOptions, ignore) {
 
               if (!areAllDependenciesSelected) {
                 // remove the files and folders
-                removeFiles(uniqueFiles, directory);
+                await removeFiles(uniqueFiles, directory);
               }
             }
           }
@@ -110,25 +110,25 @@ function processPlacecodeFiles(directory, selectedOptions, ignore) {
       }
     }
   } catch (error) {
-    console.error(`Error processing placecode files: ${error}`);
+    console.error(`Error processing placecode files:dsd ${error}`);
   }
 }
 
-function removeFiles(targetsArray, directory) {
-  // Remove the specified files and folders
+async function removeFiles(targetsArray, directory) {
   for (const target of targetsArray) {
     const targetPath = path.join(directory, target);
     try {
-      if (fs.existsSync(targetPath)) {
-        const stats = fs.statSync(targetPath);
+      if (await fs.exists(targetPath)) {
+        const stats = await fs.stat(targetPath);
         if (stats.isDirectory()) {
-          fs.rm(targetPath, { recursive: true });
+          await fs.remove(targetPath);
         } else {
-          fs.unlink(targetPath);
+          await fs.unlink(targetPath);
         }
       }
     } catch (error) {
       console.error(`Error removing ${targetPath}: ${error}`);
+      throw error; // Rethrow the error for the caller to handle
     }
   }
 }

@@ -52,9 +52,7 @@ function formatCommentMarkersInFiles(sourceDir, ignore) {
       const stats = fs.statSync(filePath);
 
       if (stats.isFile()) {
-        if (filePath.endsWith(".js")) {
-          formatCommentMarkersInFile(filePath);
-        }
+        formatCommentMarkersInFile(filePath);
       } else if (stats.isDirectory()) {
         traverseDirectory(filePath);
       }

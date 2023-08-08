@@ -20,42 +20,49 @@ function cloneRepo(repoUrl, destDir) {
 }
 
 // Helper function to move files from the template directory to the destination directory
-function moveFiles(sourceDir, destDir) {
-  // Remove the .git folder
-  const gitDir = path.join(sourceDir, ".git");
-  fs.removeSync(gitDir);
+async function moveFiles(sourceDir, destDir) {
+  try {
+    // Remove the .git folder asynchronously using fs-extra
+    const gitDir = path.join(sourceDir, ".git");
+    await fs.remove(gitDir);
 
-  // Remove placecode.json file
-  const optionsFilePath = path.join(sourceDir, "placecode.json");
-  fs.removeSync(optionsFilePath);
+    // Remove placecode.json file asynchronously using fs-extra
+    const optionsFilePath = path.join(sourceDir, "placecode.json");
+    await fs.remove(optionsFilePath);
 
-  // Remove the pc.config.json file
-  const zpcDir = path.join(sourceDir, "pc.config.json");
-  fs.removeSync(zpcDir);
+    // Remove the pc.config.json file asynchronously using fs-extra
+    const zpcDir = path.join(sourceDir, "pc.config.json");
+    await fs.remove(zpcDir);
 
-  fs.readdirSync(sourceDir).forEach((file) => {
-    const sourceFile = path.join(sourceDir, file);
-    const destFile = path.join(destDir, file);
-    const sourceStats = fs.statSync(sourceFile);
+    const files = await fs.readdir(sourceDir);
 
-    // Check if the source item is a directory
-    if (sourceStats.isDirectory()) {
-      const destSubDir = path.join(destDir, file);
+    for (const file of files) {
+      const sourceFile = path.join(sourceDir, file);
+      const destFile = path.join(destDir, file);
+      const sourceStats = await fs.stat(sourceFile);
 
-      // Create the destination subdirectory if it doesn't exist
-      if (!fs.existsSync(destSubDir)) {
-        fs.mkdirSync(destSubDir);
-      }
+      // Check if the source item is a directory
+      if (sourceStats.isDirectory()) {
+        const destSubDir = path.join(destDir, file);
 
-      // Move the files inside the source subdirectory to the destination subdirectory
-      moveFiles(sourceFile, destSubDir);
-    } else {
-      if (!fs.existsSync(destFile)) {
+        // Create the destination subdirectory if it doesn't exist
+        if (!fs.existsSync(destSubDir)) {
+          await fs.mkdir(destSubDir);
+        }
+
+        // Move the files inside the source subdirectory to the destination subdirectory
+        await moveFiles(sourceFile, destSubDir);
+      } else {
         // Move the file to the destination directory
-        fs.moveSync(sourceFile, destFile, { overwrite: true });
+        if (!fs.existsSync(destFile)) {
+          await fs.move(sourceFile, destFile, { overwrite: true });
+        }
       }
     }
-  });
+  } catch (error) {
+    console.error("Error moving files:", error);
+    throw error; // Rethrow the error for the caller to handle
+  }
 }
 
 async function gen(arg) {
@@ -157,9 +164,9 @@ async function gen(arg) {
 
   // Run the placecode process
   try {
-    core("remove", templateDir);
+    await core("remove", templateDir);
 
-    moveFiles(templateDir, process.cwd());
+    await moveFiles(templateDir, process.cwd());
 
     // run prettier
     const { ignore } = readConfigJson(process.cwd());

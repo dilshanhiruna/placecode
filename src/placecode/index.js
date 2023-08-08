@@ -54,7 +54,7 @@ function convertJsonOptions(input) {
   return output;
 }
 
-function core(cmd, dir) {
+async function core(cmd, dir) {
   const sourceDir = dir ? dir : process.cwd();
 
   const options = readPlacecodeJson(sourceDir);
@@ -75,7 +75,10 @@ function core(cmd, dir) {
   }
 
   if (cmd === "fmt") {
-    formatCommentMarkers(sourceDir, ignore);
+    formatCommentMarkers(
+      sourceDir,
+      ignore.filter((item) => item !== "zpc.txt")
+    );
   }
 
   if (cmd === "run") {
@@ -123,7 +126,7 @@ function core(cmd, dir) {
 
   if (cmd === "remove") {
     if (!checkCommentMarkers(sourceDir, ignore)) {
-      processPlacecodeFiles(sourceDir, selectedOptions, ignore);
+      await processPlacecodeFiles(sourceDir, selectedOptions, ignore);
       generateTemplate(sourceDir, selectedOptions, ignore);
     }
   }
