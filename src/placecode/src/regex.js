@@ -30,7 +30,7 @@ const regex_all_markers = /\/\/ pc:(begin|end|depend)[^\r\n]*\r?\n/g;
 const regex_start_only_marker = /\/\/ pc:begin:/g;
 
 // end only marker
-const regex_end_only_marker = /\/\/ pc:end/g;
+const regex_end_only_marker = /\/\/ pc:end:/g;
 
 // how all markers start
 const regex_all_markers_start = "//";

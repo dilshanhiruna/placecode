@@ -8,6 +8,7 @@ const runValidations = require("./src/validations");
 const { addZpcFiles, deleteEmptyZpcFiles } = require("./src/zpcfiles");
 const formatCommentMarkers = require("./src/formatter");
 const defaultIgnore = require("./src/ignoreList");
+
 const fs = require("fs");
 const path = require("path");
 
@@ -64,14 +65,17 @@ async function core(cmd, dir) {
   const selectedOptions = convertJsonOptions(options);
 
   if (cmd === "re") {
-    const deletedCount = deleteEmptyZpcFiles(sourceDir, ignore);
-
     blockReset(sourceDir, selectedOptions, ignore);
   }
 
-  if (cmd === "addzpc") {
+  if (cmd === "zpc") {
     const createdCount = addZpcFiles(sourceDir, ignore);
     console.log(`Total zpc.txt files created: ${createdCount}`);
+  }
+
+  if (cmd === "zpc-rm") {
+    const deletedCount = deleteEmptyZpcFiles(sourceDir, ignore);
+    console.log(`Total zpc.txt files deleted: ${deletedCount}`);
   }
 
   if (cmd === "fmt") {
@@ -93,8 +97,6 @@ async function core(cmd, dir) {
         }
       }
 
-      const deletedCount = deleteEmptyZpcFiles(sourceDir, ignore);
-
       const results = runValidations(sourceDir);
 
       if (!results.isValid) {
@@ -113,15 +115,17 @@ async function core(cmd, dir) {
   }
 
   if (cmd === "validate") {
-    const results = runValidations(sourceDir);
+    if (!checkCommentMarkers(sourceDir, ignore)) {
+      const results = runValidations(sourceDir);
 
-    if (!results.isValid) {
-      console.error("\x1b[33m%s\x1b[0m", `placecode.json validation failed:`);
-      console.log(results.errorMessage);
-      process.exit(1); // Exit the process with an error code
+      if (!results.isValid) {
+        console.error("\x1b[33m%s\x1b[0m", `Validation failed:`);
+        console.log(results.errorMessage);
+        process.exit(1); // Exit the process with an error code
+      }
+
+      console.log("\x1b[32m%s\x1b[0m", "Validation passed.");
     }
-
-    console.log("\x1b[32m%s\x1b[0m", "placecode.json validation passed.");
   }
 
   if (cmd === "remove") {

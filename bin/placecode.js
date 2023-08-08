@@ -36,10 +36,17 @@ program
   });
 
 program
-  .command("addzpc")
-  .description("Add empty zpc files to every folder")
-  .action(() => {
-    runCmd("addzpc");
+  .command("zpc")
+  .description(
+    "Add empty zpc files to every folder or remove them with -rm flag"
+  )
+  .option("-rm, --remove", "Remove empty zpc files")
+  .action((options) => {
+    if (options.remove) {
+      runCmd("zpc-rm");
+    } else {
+      runCmd("zpc");
+    }
   });
 
 program

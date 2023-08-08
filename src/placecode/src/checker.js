@@ -23,8 +23,10 @@ function checkCommentMarkers(dir, ignore) {
       const endCount = (content.match(regex_end_only_marker) || []).length;
 
       if (startCount !== endCount) {
-        console.error(`\nMarkers do not match`);
-        console.error(`Error in file '${filePath}'`);
+        console.error("\x1b[33m%s\x1b[0m", "Markers do not match");
+        console.error(
+          `Error in file: ${filePath.replace(process.cwd() + path.sep, "")}`
+        );
         errorFound = true;
         break;
       }
