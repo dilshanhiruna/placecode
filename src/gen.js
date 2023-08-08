@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs-extra");
 const { spawnSync } = require("child_process");
 const { core } = require("../src/placecode/index.js");
+const Spinner = require("../src/placecode/spinner.js");
 const { readConfigJson } = require("../src/placecode/index.js");
 const usePrettier = require("../src/placecode/src/prettier.js");
 
@@ -66,9 +67,13 @@ async function moveFiles(sourceDir, destDir) {
 }
 
 async function gen(arg) {
+  const spinner = new Spinner();
+
+  spinner.start("Generating template...");
+
   const templateDir = path.join(__dirname, "../templates");
   // clean the template directory
-  fs.emptyDirSync(templateDir);
+  await fs.emptyDir(templateDir);
 
   let url = "";
   let featureNumbers = [];
@@ -172,11 +177,13 @@ async function gen(arg) {
     const { ignore } = readConfigJson(process.cwd());
     await usePrettier(process.cwd(), ignore);
 
-    console.log("Features: ", enabledFeatureLabels.join(", "));
+    console.log("\nFeatures: ", enabledFeatureLabels.join(", "));
     console.log("\x1b[32m%s\x1b[0m", "Template generation complete!");
   } catch (error) {
     console.log("Template generation failed.");
     process.exit(1); // Error occurred during execution
+  } finally {
+    spinner.stop();
   }
 }
 

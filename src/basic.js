@@ -1,8 +1,8 @@
 const { core } = require("./placecode");
 
-function runCmd(cmd) {
+async function runCmd(cmd) {
   try {
-    core(cmd);
+    await core(cmd);
     process.exit(0); // Successful execution
   } catch (error) {
     console.error(error);

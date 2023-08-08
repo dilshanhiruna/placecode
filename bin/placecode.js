@@ -10,29 +10,29 @@ program
   .version(packageJson.version)
   .command("init")
   .description("Initialize the project")
-  .action(() => {
-    init();
+  .action(async () => {
+    await init();
   });
 
 program
   .command("gen <arg>")
   .description("Generate the project with the specified argument")
-  .action((arg) => {
-    gen(arg);
+  .action(async (arg) => {
+    await gen(arg);
   });
 
 program
   .command("run")
   .description("Run the project")
-  .action(() => {
-    runCmd("run");
+  .action(async () => {
+    await runCmd("run");
   });
 
 program
   .command("re")
   .description("Reset the project without running it")
-  .action(() => {
-    runCmd("re");
+  .action(async () => {
+    await runCmd("re");
   });
 
 program
@@ -41,26 +41,26 @@ program
     "Add empty zpc files to every folder or remove them with -rm flag"
   )
   .option("-rm, --remove", "Remove empty zpc files")
-  .action((options) => {
+  .action(async (options) => {
     if (options.remove) {
-      runCmd("zpc-rm");
+      await runCmd("zpc-rm");
     } else {
-      runCmd("zpc");
+      await runCmd("zpc");
     }
   });
 
 program
   .command("fmt")
   .description("Format the comment markers")
-  .action(() => {
-    runCmd("fmt");
+  .action(async () => {
+    await runCmd("fmt");
   });
 
 program
   .command("validate")
   .description("Validate the placecode.json file")
-  .action(() => {
-    runCmd("validate");
+  .action(async () => {
+    await runCmd("validate");
   });
 
 program.parse(process.argv);

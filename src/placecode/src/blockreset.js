@@ -6,9 +6,9 @@ const {
   regex_pc_lines,
 } = require("./regex");
 
-function blockReset(dir, selectedOptions, ignore) {
+async function blockReset(dir, selectedOptions, ignore) {
   // restore moved files
-  restoreMovedFiles();
+  await restoreMovedFiles();
 
   const files = fs.readdirSync(dir);
   for (const file of files) {
@@ -63,7 +63,7 @@ function uncommentCodeLines(codeBlock) {
     .join("\n");
 }
 
-function restoreMovedFiles() {
+async function restoreMovedFiles() {
   const tempDirectory = path.join(".placecode/temp");
   const movedFilesDataPath = path.join(".placecode/temp/temp_data.json");
 
@@ -90,7 +90,7 @@ function restoreMovedFiles() {
       fs.unlinkSync(movedFilesDataPath);
 
       // remove all empty directories
-      fs.rmdirSync(tempDirectory, { recursive: true });
+      await fs.rm(tempDirectory, { recursive: true });
     }
   } catch (error) {
     console.error(`Error restoring moved files: ${error}`);

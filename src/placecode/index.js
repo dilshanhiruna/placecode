@@ -65,7 +65,7 @@ async function core(cmd, dir) {
   const selectedOptions = convertJsonOptions(options);
 
   if (cmd === "re") {
-    blockReset(sourceDir, selectedOptions, ignore);
+    await blockReset(sourceDir, selectedOptions, ignore);
   }
 
   if (cmd === "zpc") {
@@ -108,7 +108,7 @@ async function core(cmd, dir) {
         process.exit(1); // Exit the process with an error code
       }
 
-      blockReset(sourceDir, selectedOptions, ignore);
+      await blockReset(sourceDir, selectedOptions, ignore);
       blockFiles(sourceDir, selectedOptions, ignore);
       blockComments(sourceDir, selectedOptions, ignore);
     }
