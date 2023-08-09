@@ -1,6 +1,7 @@
 const defaultIgnore = [
   "zpc.txt",
   "node_modules",
+  ".placecode",
   "placecode.json",
   "pc.config.json",
   "package.json",

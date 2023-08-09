@@ -174,7 +174,9 @@ function saveMovedFilesData(movedFilesData) {
 
     fs.writeFileSync(filePath, mergedDataString);
   } catch (error) {
-    console.error(`Error saving moved files data: ${error}`);
+    if (error.code !== "ENOENT") {
+      console.error(`Error saving moved files data: ${error}`);
+    }
   }
 }
 
