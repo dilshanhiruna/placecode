@@ -62,10 +62,13 @@ async function core(cmd, dir) {
 
   const { ignore } = readConfigJson(sourceDir);
 
+  // ignore without zpc.txt
+  const ignorewozpc = ignore.filter((item) => item !== "zpc.txt");
+
   const selectedOptions = convertJsonOptions(options);
 
   if (cmd === "re") {
-    await blockReset(sourceDir, selectedOptions, ignore);
+    blockReset(sourceDir, selectedOptions, ignore);
   }
 
   if (cmd === "zpc") {
@@ -79,23 +82,19 @@ async function core(cmd, dir) {
   }
 
   if (cmd === "fmt") {
-    formatCommentMarkers(
-      sourceDir,
-      ignore.filter((item) => item !== "zpc.txt")
-    );
+    formatCommentMarkers(sourceDir, ignorewozpc);
   }
 
   if (cmd === "run") {
-    if (!checkCommentMarkers(sourceDir, ignore)) {
+    if (!checkCommentMarkers(sourceDir, ignorewozpc)) {
       // show running features
-      console.log("Running features:");
-      let counter = 1;
-      for (const [key, value] of Object.entries(selectedOptions)) {
-        if (value) {
-          console.log(`  ${counter}. ${key}`);
-          counter++;
-        }
-      }
+      console.log(
+        "Running features: " +
+          Object.entries(selectedOptions)
+            .filter(([key, value]) => value)
+            .map(([key]) => key)
+            .join(", ")
+      );
 
       const results = runValidations(sourceDir);
 
@@ -108,14 +107,14 @@ async function core(cmd, dir) {
         process.exit(1); // Exit the process with an error code
       }
 
-      await blockReset(sourceDir, selectedOptions, ignore);
+      blockReset(sourceDir, selectedOptions, ignore);
       blockFiles(sourceDir, selectedOptions, ignore);
       blockComments(sourceDir, selectedOptions, ignore);
     }
   }
 
   if (cmd === "validate") {
-    if (!checkCommentMarkers(sourceDir, ignore)) {
+    if (!checkCommentMarkers(sourceDir, ignorewozpc)) {
       const results = runValidations(sourceDir);
 
       if (!results.isValid) {
@@ -129,7 +128,7 @@ async function core(cmd, dir) {
   }
 
   if (cmd === "remove") {
-    if (!checkCommentMarkers(sourceDir, ignore)) {
+    if (!checkCommentMarkers(sourceDir, ignorewozpc)) {
       await processPlacecodeFiles(sourceDir, selectedOptions, ignore);
       generateTemplate(sourceDir, selectedOptions, ignore);
     }
