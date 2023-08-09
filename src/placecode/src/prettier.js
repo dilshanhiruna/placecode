@@ -12,9 +12,39 @@ const supportedExtensions = [
   ".vue",
   ".graphql",
   ".gql",
+  ".json",
+  ".css",
+  ".scss",
+  ".less",
+  ".html",
+  ".md",
+  ".mdx",
+  ".yaml",
+  ".yml",
+  ".toml",
 ];
 
-// Helper function to check if a file is supported by Prettier
+const parserMappings = {
+  ".js": "babel",
+  ".mjs": "babel",
+  ".jsx": "babel",
+  ".cjs": "babel",
+  ".ts": "typescript",
+  ".tsx": "typescript",
+  ".vue": "vue",
+  ".graphql": "graphql",
+  ".gql": "graphql",
+  ".json": "json",
+  ".css": "css",
+  ".scss": "scss",
+  ".less": "less",
+  ".html": "html",
+  ".md": "markdown",
+  ".mdx": "mdx",
+  ".yaml": "yaml",
+  ".yml": "yaml",
+};
+
 async function isFormattableByPrettier(filePath) {
   try {
     const fileInfo = await prettier.getFileInfo(filePath);
@@ -30,7 +60,6 @@ async function isFormattableByPrettier(filePath) {
   }
 }
 
-// Helper function to format files using Prettier
 async function usePrettier(sourceDir, ignore) {
   try {
     const files = fs.readdirSync(sourceDir);
@@ -38,23 +67,21 @@ async function usePrettier(sourceDir, ignore) {
       const sourceFile = path.join(sourceDir, file);
       const sourceStats = fs.statSync(sourceFile);
 
-      // Check if the source item is in the ignore list
       if (ignore.includes(file)) {
-        continue; // Skip formatting for ignored files and directories
+        continue;
       }
 
-      // Check if the source item is a directory
       if (sourceStats.isDirectory()) {
         await usePrettier(sourceFile, ignore);
       } else {
-        // Check if the file is supported by Prettier before formatting
         if (await isFormattableByPrettier(sourceFile)) {
-          // Format the file using Prettier
+          const extension = path.extname(sourceFile);
+          const parser = parserMappings[extension] || "babel";
           const fileContent = fs.readFileSync(sourceFile, "utf-8");
           const formattedContent = await prettier.format(fileContent, {
-            parser: "babel",
-            singleQuote: true, // Use single quotes for strings
-            trailingComma: "all", // Add trailing commas for multiline arrays and objects
+            parser: parser,
+            singleQuote: true,
+            trailingComma: "all",
           });
 
           fs.writeFileSync(sourceFile, formattedContent, "utf-8");

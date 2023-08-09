@@ -4,7 +4,6 @@ const defaultIgnore = [
   ".placecode",
   "placecode.json",
   "pc.config.json",
-  "package.json",
   "bin",
   "dist",
   "docs",

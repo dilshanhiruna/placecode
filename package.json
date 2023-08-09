@@ -1,6 +1,6 @@
 {
   "name": "placecode",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "dynamic template generator",
   "bin": {
     "placecode": "./bin/placecode.js"
