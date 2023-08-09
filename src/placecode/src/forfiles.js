@@ -99,7 +99,7 @@ async function processPlacecodeFiles(directory, selectedOptions, ignore) {
       }
 
       // Remove the zpc.txt file
-      fs.unlink(placecodePath);
+      await fs.unlink(placecodePath);
     }
     // Recursively process any subdirectories
     for (const file of files) {
@@ -110,7 +110,7 @@ async function processPlacecodeFiles(directory, selectedOptions, ignore) {
       }
     }
   } catch (error) {
-    console.error(`Error processing placecode files:dsd ${error}`);
+    console.error(`Error processing placecode files: ${error}`);
   }
 }
 
