@@ -56,7 +56,7 @@ For more details on installation and troubleshooting, refer to the [Installation
 - **placecode run**: Execute the dynamic template based on the enabled features in placecode.json.
 - **placecode re**: Revert the changes made by placecode run and restore the original project state.
 - **placecode fmt**: Format comment markers in your placecode project for consistency.
-- **placecode validate**: Validate the placecode.json file.
+- **placecode validate**: Validate the placecode.json file and comment markers for errors.
 - **placecode zpc**: Add empty zpc.txt files to every directory for specifying files and folders associated with specific features.
 - **placecode zpc -rm**: Remove all empty zpc.txt files from the project.
 - **placecode gen <template-code-from-placecode.io>**: Generate templates from existing dynamic templates from placecode.io.
