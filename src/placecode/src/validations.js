@@ -17,7 +17,6 @@ function validateFeatureFile(obj) {
     if (
       typeof category.label !== "string" ||
       typeof category.description !== "string" ||
-      typeof category.required !== "boolean" ||
       !Array.isArray(category.features) ||
       category.features.some(
         (feature) =>
@@ -228,18 +227,24 @@ function validateDependLabels(data) {
 }
 
 //F5
-// There can be only one feature enabled per category
+// There can be only one feature enabled per category, unless the category has the property "multi" set to true
 function validateSingleFeaturePerCategory(data) {
   const categoryMap = {};
 
   // Step 1: Build the category map
   data.forEach((category) => {
-    categoryMap[category.label] = category.features;
+    categoryMap[category.label] = {
+      features: category.features,
+      multi: category.multi || false, // Default to false if "multi" is not provided
+    };
   });
 
-  // Step 2: Validate that only one feature is enabled per category
-  for (const category of Object.keys(categoryMap)) {
-    const features = categoryMap[category];
+  // Step 2: Validate that only one feature is enabled per category, unless the category has the property "multi" set to true
+  for (const categoryName of Object.keys(categoryMap)) {
+    const { features, multi } = categoryMap[categoryName];
+
+    if (multi) continue; // Skip validation for this category
+
     const enabledFeaturesCount = features.reduce(
       (count, feature) => (feature.enabled ? count + 1 : count),
       0
@@ -248,8 +253,8 @@ function validateSingleFeaturePerCategory(data) {
     if (enabledFeaturesCount > 1) {
       return {
         isValid: false,
-        errorMessage: `More than one feature is enabled in category "${category}". Only one feature is allowed per category.`,
-        errorPath: `${category}`,
+        errorMessage: `More than one feature is enabled in category "${categoryName}". Only one feature is allowed per category unless the category has the "multi" property set to true.`,
+        errorPath: `${categoryName}`,
       };
     }
   }
